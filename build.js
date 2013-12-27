@@ -10,7 +10,7 @@ var parserSource = pegjs.buildParser(grammar, {
 })
 
 if (require.main === module) {
-  console.log('module.exports=' + parserSource)
+  console.log('module.exports=' + parserSource + '.parse')
 } else {
-  module.exports = eval(parserSource)
+  module.exports = eval(parserSource).parse
 }
