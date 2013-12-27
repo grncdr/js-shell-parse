@@ -8,7 +8,7 @@
 var isArray = require('isarray')
 
 exports.initializer = [
-  'var isArray = require("' + require.resolve('isarray') + '")',
+  'var isArray = require("isarray")',
   function join (arr) {
     return arr.join("")
   },
@@ -20,7 +20,10 @@ exports.initializer = [
   },
   function first (arr) {
     return arr[0]
-  }
+  },
+  function second (arr) {
+    return arr[1]
+  },
 ].join('\n')
 
 var rules = exports.rules = {}
@@ -28,8 +31,8 @@ var rules = exports.rules = {}
 rules.command = function (tokens) {
   return {
     type: 'command',
-    command: tokens.shift()[0],
-    args: tokens.map(first)
+    command: tokens.shift()[1],
+    args: tokens.map(second)
   }
 }
 

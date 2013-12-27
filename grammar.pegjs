@@ -2,7 +2,7 @@ commandList "a list of commands separated by control operators"
  = (command controlOperator)+
 
 command "a single command"
- = tokens:(commandToken space?)+
+ = tokens:(space* commandToken)+
 
 commandToken "tokens that compose a command"
  = bareword
