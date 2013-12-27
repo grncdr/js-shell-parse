@@ -5,7 +5,7 @@ Parse bash scripts into AST's
 ## Synopsis
 
 ```ocaml
-module.exports := (String) => Object)
+module.exports := (String) => Object
 ```
 
 _(better synopsis will come after real tests)_
