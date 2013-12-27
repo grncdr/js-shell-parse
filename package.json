@@ -1,0 +1,32 @@
+{
+  "name": "shell-parse",
+  "version": "0.0.0",
+  "description": "PEG.js-based grammar & parser for bash shell code",
+  "main": "index.js",
+  "dependencies": {
+    "isarray": "0.0.1"
+  },
+  "main": "parser.js",
+  "devDependencies": {
+    "pegjs": "~0.8.0",
+    "pegjs-override-action": "0.0.7"
+  },
+  "scripts": {
+    "test": "node test.js",
+    "prepublish": "node build.js > parser.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grncdr/shell-parse.git"
+  },
+  "keywords": [
+    "sh",
+    "posix",
+    "shell"
+  ],
+  "author": "Stephen Sugden <me@stephensugden.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/grncdr/shell-parse/issues"
+  }
+}
