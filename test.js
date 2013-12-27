@@ -1,8 +1,9 @@
 var parser = require('./build')
 
 var input = [
+  'blah >(subshell command)',
+  'first | second',
   'echo ${what/hot/not} ok \'single-quoted arg\'"quoted $var" > here',
-  'blah >(subshell command)'
 ].join('\n')
 
 console.log(

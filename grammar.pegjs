@@ -1,18 +1,24 @@
-commandList "a list of commands separated by control operators"
- = (command controlOperator)+
+commandList "a list of commands"
+ = commands:command+
 
 command "a single command"
- = tokens:(space* commandToken)+
+ = space* command:commandToken
+   args:(space+ argToken)*
+   space* redirects:redirect*
+   space* control:controlOperator?
 
-commandToken "tokens that compose a command"
+commandToken "command name"
  = bareword
  / quotation
  / variableSubstitution
  / environmentVariable
  / subShell
  / backticks
+
+argToken "command argument"
+ = commandToken
  / commandSubstitution
- / redirectOperator
+
 
 environmentVariable
  = ('$' name:readableVariableName)
@@ -21,13 +27,10 @@ writableVariableName = [a-zA-Z0-9_]+
 readableVariableName = writableVariableName / '?'  /* todo, other special vars */
 
 bareword
- = cs:(escapedMetaChar / [^$"';&<> \n])+
+ = cs:(escapedMetaChar / [^$"';&<> \n()\[\]*?|])+
 
 escapedMetaChar
- = '\\' metaChar
-
-metaChar
- = '$' / '\\' / '"' / '&' / redirectOperator
+ = '\\' char:[$\\"&<>]
 
 variableSubstitution
  = '${' expr:[^}]* '}'
@@ -40,28 +43,33 @@ quotation
    }
  }
 
-singleQuote = "'" cs:[^']+ "'"
+singleQuote = "'" cs:[^']* "'"
 
 doubleQuote
- = '"' contents:(chars:[^"$`]+ / expandable:expandsInQuotes / '\\"')+ '"'
+ = '"' contents:([^"$`]+ / expandable:expandsInQuotes / '\\"')* '"'
 
 expandsInQuotes = backticks / environmentVariable / subShell
 
 backticks
- = '`' commands:command+ '`'
+ = '`' commands:commandList+ '`'
 
 subShell
- = '$(' commands:command+ ')'
+ = '$(' commands:commandList+ ')'
 
 commandSubstitution
- = rw:[<>] '(' commands:command+ ')'
-
-space
- = cs:" "+ { return cs.join(' ') }
+ = rw:[<>] '(' commands:commandList ')'
 
 controlOperator
  = '&&' / '&' / '||' / ';' / '\n'
 
-redirectOperator
- = [<>] / '>>'
+redirect
+ = pipe / fileRedirection
 
+pipe =
+ "|" space* command:command
+
+fileRedirection
+ = op:([<>] / '>>') space* filename:argToken
+
+space
+ = " " / "\t"
