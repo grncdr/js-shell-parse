@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/grncdr/shell-parse.git"
+    "url": "https://github.com/grncdr/js-shell-parse.git"
   },
   "keywords": [
     "sh",
@@ -27,6 +27,6 @@
   "author": "Stephen Sugden <me@stephensugden.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/grncdr/shell-parse/issues"
+    "url": "https://github.com/grncdr/js-shell-parse/issues"
   }
 }
