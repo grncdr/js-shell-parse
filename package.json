@@ -1,7 +1,7 @@
 {
   "name": "shell-parse",
   "version": "0.0.0",
-  "description": "PEG.js-based grammar & parser for bash shell code",
+  "description": "Parse bash scripts into AST's",
   "main": "index.js",
   "dependencies": {
     "isarray": "0.0.1"
