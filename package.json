@@ -10,9 +10,9 @@
     "files": "tests/*.js",
     "browsers": {
       "ie": [ 8, 9, 10 ],
-      "firefox", [ "3.5", "nightly" ],
+      "firefox": [ "3.5", "nightly" ],
       "opera": [ 11, 17 ],
-      "safari": "5.1"
+      "safari": ["5.1"]
     }
   },
   "devDependencies": {
