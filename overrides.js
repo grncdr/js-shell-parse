@@ -95,7 +95,7 @@ rules.environmentVariable  = function () {
 
 rules.variableSubstitution = function () {
   return {
-    type:        'substitution',
+    type:        'variable-substitution',
     expression:  join(expr), // TODO sub-parser
   }
 }

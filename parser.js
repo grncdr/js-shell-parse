@@ -82,7 +82,7 @@ var parser=(function() {
         peg$c31 = { type: "literal", value: "}", description: "\"}\"" },
         peg$c32 = function(expr) {
           return {
-            type:        'substitution',
+            type:        'variable-substitution',
             expression:  join(expr), // TODO sub-parser
           }
         },

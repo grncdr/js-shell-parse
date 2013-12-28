@@ -1,7 +1,25 @@
 var test = require('tape')
 var parse = require('../parser')
 
-test('interpolating in quotes', function (t) {
+test('interpolation in quotes', function (t) {
+
+  var ast = parse('echo "interpolated $variable"')
+  t.deepEqual(ast[0].args, [{
+    type: 'concatenation',
+    pieces: [
+      { type: "literal", value: "interpolated " },
+      { type: "variable", name: "variable" }
+    ]
+  }], "Can interpolate environment variables")
+
+  var ast = parse('echo "interpolated ${variable/sub/rep}"')
+  t.deepEqual(ast[0].args, [{
+    type: 'concatenation',
+    pieces: [
+      { type: "literal", value: "interpolated " },
+      { type: "variable-substitution", expression: "variable/sub/rep" }
+    ]
+  }], "Can interpolate variables substitutions")
 
   var ast = parse('echo "interpolated `backtick command`"')
   t.deepEqual(ast[0].args, [{
@@ -45,5 +63,6 @@ test('interpolating in quotes', function (t) {
         ]
       }]
     }], "Can interpolate subshells (better idea!)")
+
   t.end()
 })
