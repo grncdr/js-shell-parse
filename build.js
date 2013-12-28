@@ -15,6 +15,7 @@ if (require.main === module) {
 }
 
 function getSource () {
+  delete require.cache[require.resolve('./overrides')]
   var grammar = fs.readFileSync(input, 'utf8')
   var parserSource = pegjs.buildParser(grammar, {
     output: "source",
