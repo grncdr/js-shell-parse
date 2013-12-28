@@ -2,14 +2,20 @@ commandList "a list of commands"
  = commands:command+
 
 command "a single command"
- = space* command:commandToken
+ = space*
+   assignments:(variableAssignment space+)*
+   command:commandToken
    args:(space+ argToken)*
    space* redirects:redirect*
    space* control:controlOperator?
 
+variableAssignment
+ = writableVariableName '=' argToken
+
 commandToken "command name"
  = bareword
- / quotation
+ / concatenation
+ / doubleQuote
  / variableSubstitution
  / environmentVariable
  / subShell
@@ -27,28 +33,43 @@ writableVariableName = [a-zA-Z0-9_]+
 readableVariableName = writableVariableName / '?'  /* todo, other special vars */
 
 bareword
- = cs:(escapedMetaChar / [^$"';&<> \n()\[\]*?|])+
+ = cs:(escapedMetaChar / [^$"';&<>\n()\[\]*?| ])+
 
 escapedMetaChar
- = '\\' char:[$\\"&<>]
+ = '\\' character:[$\\"&<> ]
 
 variableSubstitution
  = '${' expr:[^}]* '}'
 
-quotation
- = pieces:(singleQuote / doubleQuote / bareword)+ {
-   return {
-     type: 'quotation',
-     pieces: pieces
-   }
- }
+concatenation
+ = pieces:( bareword
+          / doubleQuote
+          / environmentVariable
+          / variableSubstitution
+          / subShell
+          / backticks
+          )+
 
 singleQuote = "'" cs:[^']* "'"
 
-doubleQuote
- = '"' contents:([^"$`]+ / expandable:expandsInQuotes / '\\"')* '"'
+doubleQuote = '"' contents:(expandsInQuotes / doubleQuoteChar+)* '"'
 
-expandsInQuotes = backticks / environmentVariable / subShell
+doubleQuoteChar
+ = !doubleQuoteMeta chr:.      { return chr }
+ / '\\' chr:doubleQuoteMeta    { return chr }
+ / '\\' !doubleQuoteMeta chr:. { return '\\' + chr }
+
+doubleQuoteMeta
+ = '"' / '\\' / '$' / '`'
+
+escapedInQuotes
+ = '\\' character:[`$"]
+
+expandsInQuotes
+ = backticks
+ / environmentVariable
+ / variableSubstitution
+ / subShell
 
 backticks
  = '`' commands:commandList+ '`'

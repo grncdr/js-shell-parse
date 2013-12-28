@@ -32,21 +32,36 @@ exports.initializer = [
   function second (arr) {
     return arr[1]
   },
+  function flattenConcatenations (pieces) {
+    var results = []
+    pieces.forEach(function (piece) {
+      if (piece.type == 'concatenation')
+        results = results.concat(piece.pieces)
+      else
+        results.push(piece)
+    })
+    return results
+  }
 ].join('\n')
 
 rules.command = function (command, args, redirects, control) {
   if (typeof redirects == 'undefined') redirects = []
+  var env = {}
+  assignments.forEach(function (assignment) {
+    env[name] = value
+  })
   return {
     type: 'command',
     command: command,
     args: args.map(second),
     redirects: redirects,
-    control: control
+    control: control,
+    env: env
   }
 }
 
 rules.controlOperator = function () {
-  var op = text()
+  var op = text() || ';'
   return op == '\n' ? ';' : op
 }
 
@@ -75,17 +90,29 @@ rules.bareword = function (cs) { return literal(cs) }
 
 rules.escapedMetaChar = function (character) { return character }
 
-rules.singleQuote = function (cs) { return literal(cs) }
-rules.doubleQuote = function (contents) {
-  contents = contents.map(function (it) {
-    return isArray(it) ?  literal(it) : it
-  })
-  return {
-    type: 'double-quote',
-    contents: contents
+rules.concatenation = function (pieces) {
+  pieces = flattenConcatenations(pieces)
+  return pieces.length == 1 ? pieces[0] : {
+    type: 'concatenation',
+    pieces: pieces
   }
 }
 
+rules.singleQuote = function (cs) { return literal(cs) }
+rules.doubleQuote = function (contents) {
+  var pieces = contents.map(function (it) {
+    return isArray(it) ?  literal(it) : it
+  })
+  pieces = flattenConcatenations(pieces)
+  return pieces.length == 1 ? pieces[0] : {
+    type: 'concatenation',
+    pieces: pieces
+  }
+}
+
+rules.escapedQuote = function (character) {
+  return character
+}
 rules.backticks = function (commands) {
   return {type: 'backticks', commands: commands}
 }

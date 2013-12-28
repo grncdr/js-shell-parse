@@ -2,17 +2,17 @@
   "name": "shell-parse",
   "version": "0.0.0",
   "description": "Parse bash scripts into AST's",
-  "main": "index.js",
+  "main": "parser.js",
   "dependencies": {
     "isarray": "0.0.1"
   },
-  "main": "parser.js",
   "devDependencies": {
     "pegjs": "~0.8.0",
-    "pegjs-override-action": "0.0.7"
+    "pegjs-override-action": "0.0.7",
+    "tape": "~2.3.2"
   },
   "scripts": {
-    "test": "node test.js",
+    "test": "tape tests/*.js",
     "prepublish": "node build.js > parser.js"
   },
   "repository": {
