@@ -60,20 +60,34 @@ exports.initializer = [
   }
 ].join('\n')
 
-rules.command = function (command, args, redirects, control) {
-  if (typeof redirects == 'undefined') redirects = []
-  var env = {}
-  assignments.forEach(function (assignment) {
-    env[assignment.name] = assignment.value
-  })
-  return {
+rules.command = function (pre, name, post, control) {
+  debugger
+  var command = {
     type: 'command',
-    command: command,
-    args: map(args, second),
-    redirects: redirects,
-    control: control || ';',
-    env: env
+    command: name,
+    args: [],
+    redirects: [],
+    env: {},
+    control: control || ';'
   }
+  map(pre, first).concat(map(post, second)).forEach(function (token) {
+    if (!token || !token.type) return
+    switch (token.type) {
+      case 'move-fd':
+      case 'duplicate-fd':
+      case 'redirect-fd':
+        return command.redirects.push(token)
+      case 'assignment':
+        return command.env[token.name] = token.value
+      default:
+        command.args.push(token)
+    }
+  })
+  return command
+}
+
+rules.commandName = function (name) {
+  return name
 }
 
 rules.controlOperator = function () {
@@ -135,9 +149,31 @@ rules.pipe = function (command) {
   return {type: 'pipe', command: command}
 }
 
-rules.fileRedirection = function (filename) {
+rules.moveFd = function (fd, op, dest) {
+  if (fd == null) fd = op[0] == '<' ? 0 : 1;
   return {
-    type: 'redirect',
+    type: 'move-fd',
+    fd: fd,
+    op: op,
+    dest: dest
+  }
+}
+
+rules.duplicateFd = function (fd, op, filename) {
+  if (fd == null) fd = op[0] == '<' ? 0 : 1;
+  return {
+    type: 'duplicate-fd',
+    fd: fd,
+    op: op,
+    filename: filename
+  }
+}
+
+rules.redirectFd = function (fd, op, filename) {
+  if (fd == null) fd = op[0] == '<' ? 0 : 1;
+  return {
+    type: 'redirect-fd',
+    fd: fd,
     op: op,
     filename: filename
   }

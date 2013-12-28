@@ -3,17 +3,16 @@ commandList "a list of commands"
 
 command "a single command"
  = space*
-   assignments:(variableAssignment space+)*
-   command:commandName
-   args:(space+ argument)*
-   space* redirects:redirect*
+   pre:((variableAssignment / redirect) space+)*
+   name:commandName
+   post:(space+ (redirect / argument))*
    space* control:controlOperator?
 
 variableAssignment
  = writableVariableName '=' argument
 
 commandName "command name"
- = concatenation
+ = !redirect name:concatenation
 
 argument "command argument"
  = commandName
@@ -79,13 +78,25 @@ controlOperator
  = '&&' / '&' / '||' / ';' / '\n'
 
 redirect
- = pipe / fileRedirection
+ = moveFd / duplicateFd / redirectFd / pipe
 
 pipe =
  "|" space* command:command
 
-fileRedirection
- = op:([<>] / '>>') space* filename:argument
+moveFd
+ = fd:fd? op:('<&' / '>&') dest:fd '-'
+
+duplicateFd
+ = fd:fd? op:('<&' / '>&') space* filename:argument
+
+redirectFd
+ = fd:fd? op:redirectionOperator space* filename:argument
+
+redirectionOperator
+ = '<' / '>' / '>|' / '&>' / '>>' / '&>>'
+
+fd
+ = digits:[0-9]+ { return parseInt(join(digits), 10) }
 
 space
  = " " / "\t"
