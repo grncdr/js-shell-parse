@@ -48,20 +48,20 @@ rules.command = function (command, args, redirects, control) {
   if (typeof redirects == 'undefined') redirects = []
   var env = {}
   assignments.forEach(function (assignment) {
-    env[name] = value
+    env[assignment.name] = assignment.value
   })
   return {
     type: 'command',
     command: command,
     args: args.map(second),
     redirects: redirects,
-    control: control,
+    control: control || ';',
     env: env
   }
 }
 
 rules.controlOperator = function () {
-  var op = text() || ';'
+  var op = text()
   return op == '\n' ? ';' : op
 }
 
