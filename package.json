@@ -37,8 +37,6 @@
     "pegjs": "~0.8.0",
     "pegjs-override-action": "0.0.7",
     "tape": "~2.3.2",
-    "watchify": "~0.5.0",
-    "catw": "~0.2.0",
     "covert": "~0.2.0"
   },
   "repository": {
