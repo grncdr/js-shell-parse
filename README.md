@@ -20,7 +20,7 @@ execute using an interpreter or something.
 This structure is in need of some peer review:
 
 ```javascript
-var parse = require('./build')
+var parse = require('./')
 
 var input = [
   "blah >(substitute-command --with args)",
@@ -65,12 +65,14 @@ Output:
               }
             ],
             "redirects": [],
-            "control": null
+            "env": {},
+            "control": ";"
           }
         ]
       }
     ],
     "redirects": [],
+    "env": {},
     "control": ";"
   },
   {
@@ -79,8 +81,7 @@ Output:
       "type": "literal",
       "value": "first"
     },
-    "args": [],
-    "redirects": [
+    "args": [
       {
         "type": "pipe",
         "command": {
@@ -91,11 +92,14 @@ Output:
           },
           "args": [],
           "redirects": [],
+          "env": {},
           "control": ";"
         }
       }
     ],
-    "control": null
+    "redirects": [],
+    "env": {},
+    "control": ";"
   },
   {
     "type": "command",
@@ -105,7 +109,7 @@ Output:
     },
     "args": [
       {
-        "type": "substitution",
+        "type": "variable-substitution",
         "expression": "what/hot/not"
       },
       {
@@ -113,31 +117,27 @@ Output:
         "value": "ok"
       },
       {
-        "type": "quotation",
+        "type": "concatenation",
         "pieces": [
           {
             "type": "literal",
             "value": "single-quoted arg"
           },
           {
-            "type": "double-quote",
-            "contents": [
-              {
-                "type": "literal",
-                "value": "double-quoted "
-              },
-              {
-                "type": "variable",
-                "name": "var"
-              }
-            ]
+            "type": "literal",
+            "value": "double-quoted "
+          },
+          {
+            "type": "variable",
+            "name": "var"
           }
         ]
       }
     ],
     "redirects": [
       {
-        "type": "redirect",
+        "type": "redirect-fd",
+        "fd": 1,
         "op": ">",
         "filename": {
           "type": "literal",
@@ -145,6 +145,7 @@ Output:
         }
       }
     ],
+    "env": {},
     "control": ";"
   }
 ]

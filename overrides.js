@@ -34,6 +34,7 @@ exports.initializer = [
     return arr[1]
   },
   function flattenConcatenation (pieces) {
+    // TODO - this algo sucks, it's probably on the order of n^4
     var result = [pieces[0]]
       , len = pieces.length
       , prev = pieces[0]
@@ -42,9 +43,13 @@ exports.initializer = [
     for (var i = 1; i < len; i++) {
       current = pieces[i]
       if (current.type == 'concatenation') {
-        current = flattenConcatenation(current)
+        current = flattenConcatenation(current.pieces)
       }
-      if (current.type == 'literal' && prev.type == 'literal') {
+      if (current.type == 'concatenation') {
+        // it's still a concatenation, append it's pieces to ours
+        result = result.concat(current.pieces)
+      }
+      else if (current.type == 'literal' && prev.type == 'literal') {
         // merge two literals
         prev.value += current.value
       }
@@ -61,7 +66,6 @@ exports.initializer = [
 ].join('\n')
 
 rules.command = function (pre, name, post, control) {
-  debugger
   var command = {
     type: 'command',
     command: name,
@@ -136,7 +140,6 @@ rules.escapedQuote = function (character) {
   return character
 }
 rules.backticks = function (commands) {
-  debugger
   return {type: 'backticks', commands: commands.map(second)}
 }
 
