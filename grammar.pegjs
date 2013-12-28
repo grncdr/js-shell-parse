@@ -13,13 +13,7 @@ variableAssignment
  = writableVariableName '=' argToken
 
 commandToken "command name"
- = bareword
- / concatenation
- / doubleQuote
- / variableSubstitution
- / environmentVariable
- / subShell
- / backticks
+ = concatenation
 
 argToken "command argument"
  = commandToken
@@ -33,7 +27,7 @@ writableVariableName = [a-zA-Z0-9_]+
 readableVariableName = writableVariableName / '?'  /* todo, other special vars */
 
 bareword
- = cs:(escapedMetaChar / [^$"';&<>\n()\[\]*?| ])+
+ = cs:(escapedMetaChar / [^$"';&<>\n()\[\]*?|` ])+
 
 escapedMetaChar
  = '\\' character:[$\\"&<> ]
@@ -43,10 +37,11 @@ variableSubstitution
 
 concatenation
  = pieces:( bareword
+          / singleQuote
           / doubleQuote
           / environmentVariable
           / variableSubstitution
-          / subShell
+          / subshell
           / backticks
           )+
 
@@ -69,13 +64,13 @@ expandsInQuotes
  = backticks
  / environmentVariable
  / variableSubstitution
- / subShell
+ / subshell
 
 backticks
- = '`' commands:commandList+ '`'
+ = '`' commands:(!backticks command)+ '`'
 
-subShell
- = '$(' commands:commandList+ ')'
+subshell
+ = '$(' commands:command+ ')'
 
 commandSubstitution
  = rw:[<>] '(' commands:commandList ')'

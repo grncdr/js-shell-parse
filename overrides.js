@@ -17,6 +17,7 @@ var rules = exports.rules = {}
 
 exports.initializer = [
   'var isArray = require("isarray")',
+  'var map = require("array-map")',
   function join (arr) {
     return arr.join("")
   },
@@ -32,15 +33,30 @@ exports.initializer = [
   function second (arr) {
     return arr[1]
   },
-  function flattenConcatenations (pieces) {
-    var results = []
-    pieces.forEach(function (piece) {
-      if (piece.type == 'concatenation')
-        results = results.concat(piece.pieces)
-      else
-        results.push(piece)
-    })
-    return results
+  function flattenConcatenation (pieces) {
+    var result = [pieces[0]]
+      , len = pieces.length
+      , prev = pieces[0]
+      , current
+
+    for (var i = 1; i < len; i++) {
+      current = pieces[i]
+      if (current.type == 'concatenation') {
+        current = flattenConcatenation(current)
+      }
+      if (current.type == 'literal' && prev.type == 'literal') {
+        // merge two literals
+        prev.value += current.value
+      }
+      else {
+        result.push(current)
+        prev = current
+      }
+    }
+    return result.length == 1 ? result[0] : {
+      type: 'concatenation',
+      pieces: result
+    }
   }
 ].join('\n')
 
@@ -53,7 +69,7 @@ rules.command = function (command, args, redirects, control) {
   return {
     type: 'command',
     command: command,
-    args: args.map(second),
+    args: map(args, second),
     redirects: redirects,
     control: control || ';',
     env: env
@@ -91,11 +107,7 @@ rules.bareword = function (cs) { return literal(cs) }
 rules.escapedMetaChar = function (character) { return character }
 
 rules.concatenation = function (pieces) {
-  pieces = flattenConcatenations(pieces)
-  return pieces.length == 1 ? pieces[0] : {
-    type: 'concatenation',
-    pieces: pieces
-  }
+  return flattenConcatenation(pieces)
 }
 
 rules.singleQuote = function (cs) { return literal(cs) }
@@ -103,18 +115,15 @@ rules.doubleQuote = function (contents) {
   var pieces = contents.map(function (it) {
     return isArray(it) ?  literal(it) : it
   })
-  pieces = flattenConcatenations(pieces)
-  return pieces.length == 1 ? pieces[0] : {
-    type: 'concatenation',
-    pieces: pieces
-  }
+  return flattenConcatenation(pieces)
 }
 
 rules.escapedQuote = function (character) {
   return character
 }
 rules.backticks = function (commands) {
-  return {type: 'backticks', commands: commands}
+  debugger
+  return {type: 'backticks', commands: commands.map(second)}
 }
 
 rules.subshell = function (commands) {

@@ -4,25 +4,42 @@
   "description": "Parse bash scripts into AST's",
   "main": "parser.js",
   "dependencies": {
-    "isarray": "0.0.1"
+    "isarray": "0.0.1",
+    "array-map": "0.0.0"
+  },
+  "scripts": {
+    "test": "tape tests/*.js",
+    "watch-grammar": "node build.js -w &",
+    "prepublish": "node build.js > parser.js"
   },
   "testling": {
     "files": "tests/*.js",
     "browsers": {
-      "ie": [ 8, 9, 10 ],
-      "firefox": [ "3.5", "nightly" ],
-      "opera": [ 11, 17 ],
-      "safari": ["5.1"]
+      "ie": [
+        8,
+        9,
+        10
+      ],
+      "firefox": [
+        "3.5",
+        "nightly"
+      ],
+      "opera": [
+        11,
+        17
+      ],
+      "safari": [
+        "5.1"
+      ]
     }
   },
   "devDependencies": {
     "pegjs": "~0.8.0",
     "pegjs-override-action": "0.0.7",
-    "tape": "~2.3.2"
-  },
-  "scripts": {
-    "test": "tape tests/*.js",
-    "prepublish": "node build.js > parser.js"
+    "tape": "~2.3.2",
+    "watchify": "~0.5.0",
+    "catw": "~0.2.0",
+    "covert": "~0.2.0"
   },
   "repository": {
     "type": "git",

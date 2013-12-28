@@ -1,5 +1,5 @@
 var test = require('tape')
-var parse = require('../build')
+var parse = require('../parser')
 
 test('Multi-line strings', function (t) {
   var input = [

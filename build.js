@@ -1,16 +1,52 @@
 var fs = require('fs')
 var pegjs = require('pegjs')
 var overrideAction = require('pegjs-override-action')
-var grammar = fs.readFileSync(__dirname + '/grammar.pegjs', 'utf8')
 
-var parserSource = pegjs.buildParser(grammar, {
-  output: "source",
-  plugins: [overrideAction],
-  overrideActionPlugin: require('./overrides')
-})
+var input     = __dirname + '/grammar.pegjs'
+var output    = __dirname + '/parser.js'
+var overrides = __dirname + '/overrides.js'
 
 if (require.main === module) {
-  console.log('module.exports=' + parserSource + '.parse')
-} else {
-  module.exports = eval(parserSource).parse
+  if (process.argv[2] == '-w') {
+    watch()
+  } else {
+    console.log(getSource())
+  }
+}
+
+function getSource () {
+  var grammar = fs.readFileSync(input, 'utf8')
+  var parserSource = pegjs.buildParser(grammar, {
+    output: "source",
+    /*
+    allowedStartRules: [
+      'commandList',
+      'command',
+      'argument'
+    ],
+   */
+    plugins: [overrideAction],
+    overrideActionPlugin: require('./overrides')
+  })
+  return [
+    'var parser=' + parserSource,
+    'parser.parse.SyntaxError = parser.SyntaxError',
+    'module.exports=parser.parse'
+  ].join('\n');
+}
+
+function watch () {
+  fs.watchFile(input, onChange)
+  fs.watchFile(overrides, onChange)
+
+  function onChange (curr, prev) {
+    if (curr.mtime > prev.mtime) {
+      try {
+        var source = getSource()
+        fs.writeFileSync(output, source)
+      } catch (err) {
+        console.error(err.message)
+      }
+    }
+  }
 }

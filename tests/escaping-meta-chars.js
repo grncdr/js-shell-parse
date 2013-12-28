@@ -1,5 +1,5 @@
 var test = require('tape')
-var parse = require('../build')
+var parse = require('../parser')
 
 test('escaping meta characters in barewords', function (t) {
   var ast = parse('echo I\\ am\\ one\\ arg')[0]
