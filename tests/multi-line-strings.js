@@ -3,16 +3,16 @@ var parse = require('../parser')
 
 test('Multi-line strings', function (t) {
   var input = [
-    'echo "This',
+    '"This',
     'is a',
     'multiline',
     'string"'
   ].join('\n')
 
-  var ast = parse(input)
-  t.deepEqual(ast[0].args[0], {
+  var arg = parse(input, 'argument')
+  t.deepEqual(arg, {
     type: 'literal',
     value: 'This\nis a\nmultiline\nstring'
-  }, 'multi-line string literals are one arg')
+  }, 'multi-line string literals are one argument')
   t.end()
 })

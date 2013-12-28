@@ -3,26 +3,26 @@ var parse = require('../parser')
 
 test('interpolation in quotes', function (t) {
 
-  var ast = parse('echo "interpolated $variable"')
-  t.deepEqual(ast[0].args, [{
+  var arg = parse('"interpolated $variable"', 'argument')
+  t.deepEqual(arg, {
     type: 'concatenation',
     pieces: [
       { type: "literal", value: "interpolated " },
       { type: "variable", name: "variable" }
     ]
-  }], "Can interpolate environment variables")
+  }, "Can interpolate environment variables")
 
-  var ast = parse('echo "interpolated ${variable/sub/rep}"')
-  t.deepEqual(ast[0].args, [{
+  var arg = parse('"interpolated ${variable/sub/rep}"', 'argument')
+  t.deepEqual(arg, {
     type: 'concatenation',
     pieces: [
       { type: "literal", value: "interpolated " },
       { type: "variable-substitution", expression: "variable/sub/rep" }
     ]
-  }], "Can interpolate variables substitutions")
+  }, "Can interpolate variables substitutions")
 
-  var ast = parse('echo "interpolated `backtick command`"')
-  t.deepEqual(ast[0].args, [{
+  var arg = parse('"interpolated `backtick command`"', 'argument')
+  t.deepEqual(arg, {
     type: 'concatenation',
     pieces: [
       { type: "literal", value:"interpolated " },
@@ -38,11 +38,11 @@ test('interpolation in quotes', function (t) {
             control: ';' }
         ]
       }]
-    }], "Can interpolate back-ticks (but you really shouldn't!)")
+    }, "Can interpolate back-ticks (but you really shouldn't!)")
 
 
-  var ast = parse('echo "interpolated $(command1; command2)"')
-  t.deepEqual(ast[0].args, [{
+  var arg = parse('"interpolated $(command1; command2)"', 'argument')
+  t.deepEqual(arg, {
     type: 'concatenation',
     pieces: [
       { type: "literal", value:"interpolated " },
@@ -62,7 +62,7 @@ test('interpolation in quotes', function (t) {
             control: ';' }
         ]
       }]
-    }], "Can interpolate subshells (better idea!)")
+    }, "Can interpolate subshells (better idea!)")
 
   t.end()
 })

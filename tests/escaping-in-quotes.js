@@ -2,17 +2,17 @@ var test = require('tape')
 var parse = require('../parser')
 
 test('escaping in quotes', function (t) {
-  var ast = parse('echo "An escaped double-quote: \\""')
-  t.deepEqual(ast[0].args, [{
+  var arg = parse('"An escaped double-quote: \\""', 'argument')
+  t.deepEqual(arg, {
     type:"literal",
     value:"An escaped double-quote: \""
-  }], "Can escape double-quotes")
+  }, "Can escape double-quotes")
 
-  var ast = parse('echo "An escaped \\$dollar sign"')
-  t.deepEqual(ast[0].args, [{
+  var arg = parse('"An escaped \\$dollar sign"', 'argument')
+  t.deepEqual(arg, {
     type:"literal",
     value:"An escaped $dollar sign"
-  }], "Can escape dollar signs")
+  }, "Can escape dollar signs")
 
   t.end()
 })

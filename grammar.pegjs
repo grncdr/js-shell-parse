@@ -4,19 +4,19 @@ commandList "a list of commands"
 command "a single command"
  = space*
    assignments:(variableAssignment space+)*
-   command:commandToken
-   args:(space+ argToken)*
+   command:commandName
+   args:(space+ argument)*
    space* redirects:redirect*
    space* control:controlOperator?
 
 variableAssignment
- = writableVariableName '=' argToken
+ = writableVariableName '=' argument
 
-commandToken "command name"
+commandName "command name"
  = concatenation
 
-argToken "command argument"
- = commandToken
+argument "command argument"
+ = commandName
  / commandSubstitution
 
 
@@ -85,7 +85,7 @@ pipe =
  "|" space* command:command
 
 fileRedirection
- = op:([<>] / '>>') space* filename:argToken
+ = op:([<>] / '>>') space* filename:argument
 
 space
  = " " / "\t"
