@@ -6,6 +6,15 @@
   "dependencies": {
     "isarray": "0.0.1"
   },
+  "testling": {
+    "files": "tests/*.js",
+    "browsers": {
+      "ie": [ 8, 9, 10 ],
+      "firefox", [ "3.5", "nightly" ],
+      "opera": [ 11, 17 ],
+      "safari": "5.1"
+    }
+  },
   "devDependencies": {
     "pegjs": "~0.8.0",
     "pegjs-override-action": "0.0.7",
