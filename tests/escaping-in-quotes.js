@@ -6,7 +6,7 @@ test('escaping in quotes', function (t) {
   t.deepEqual(ast[0].args, [{
     type:"literal",
     value:"An escaped double-quote: \""
-  }], "Can escape double-quotes inside double-quotes")
+  }], "Can escape double-quotes")
 
   var ast = parse('echo "An escaped \\$dollar sign"')
   t.deepEqual(ast[0].args, [{
