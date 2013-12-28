@@ -1650,3 +1650,4 @@ var parser=(function() {
 })()
 parser.parse.SyntaxError = parser.SyntaxError
 module.exports=parser.parse
+

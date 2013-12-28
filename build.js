@@ -29,11 +29,9 @@ function getSource () {
     plugins: [overrideAction],
     overrideActionPlugin: require('./overrides')
   })
-  return [
-    'var parser=' + parserSource,
-    'parser.parse.SyntaxError = parser.SyntaxError',
-    'module.exports=parser.parse'
-  ].join('\n');
+  return 'var parser=' + parserSource + '\n' +
+         'parser.parse.SyntaxError = parser.SyntaxError\n' +
+         'module.exports=parser.parse\n';
 }
 
 function watch () {
