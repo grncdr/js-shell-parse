@@ -169,7 +169,6 @@ rules.concatenation = function (pieces) {
 rules.singleQuote = function (inner) { return literal(inner) }
 
 rules.doubleQuote = function (contents) {
-  debugger
   var pieces = contents.map(function (it) {
     return isArray(it) ? literal(it) : it
   })

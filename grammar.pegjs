@@ -62,9 +62,9 @@ singleQuote = "'" inner:$([^']*) "'"
 doubleQuote = '"' contents:(expandsInQuotes / doubleQuoteChar+)* '"'
 
 doubleQuoteChar
- = '\\' chr:doubleQuoteMeta { debugger; return chr }
- / '\\\\'                   { debugger; return '\\' }
- / !doubleQuoteMeta chr:.   { debugger; return chr }
+ = '\\' chr:doubleQuoteMeta { return chr }
+ / '\\\\'                   { return '\\' }
+ / !doubleQuoteMeta chr:.   { return chr }
 
 doubleQuoteMeta = '"' / '$' / '`'
 
