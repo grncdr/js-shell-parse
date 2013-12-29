@@ -1,38 +1,43 @@
-commandList "a list of commands"
- = commands:command+
+script
+ = commands:(conditionalLoop / ifBlock / command)+
+
+commandList "one or more commands"
+ = first:command rest:(controlOperator command)* last:controlOperator?
 
 command "a single command"
- = space*
+ = spaceNL*
    pre:((variableAssignment / redirect) space+)*
    name:commandName
    post:(space+ (redirect / argument))*
-   space* control:controlOperator?
+   space*
+   next:(logicalOperator spaceNL* command)?
+
+logicalOperator
+ = '&&' / '||'
+
+controlOperator
+ = '&' / ';' / '\n'
+
+conditionalLoop
+ = kind:("while" / "until") spaceNL+ testCommands:commandList spaceNL*
+   "do" spaceNL*
+   commands:commandList spaceNL*
+   "done" spaceNL*
+
+ifBlock
+ = "if" spaceNL+ testCommands:commandList "then" spaceNL*
+   commands:commandList spaceNL*
+   "fi" spaceNL*
 
 variableAssignment
  = writableVariableName '=' argument
 
 commandName "command name"
- = !redirect name:concatenation
+ = !redirect !keyword name:concatenation
 
 argument "command argument"
  = commandName
  / commandSubstitution
-
-
-environmentVariable
- = ('$' name:readableVariableName)
-
-writableVariableName = [a-zA-Z0-9_]+
-readableVariableName = writableVariableName / '?'  /* todo, other special vars */
-
-bareword
- = cs:(escapedMetaChar / [^$"';&<>\n()\[\]*?|` ])+
-
-escapedMetaChar
- = '\\' character:[$\\"&<> ]
-
-variableSubstitution
- = '${' expr:[^}]* '}'
 
 concatenation
  = pieces:( bareword
@@ -44,20 +49,24 @@ concatenation
           / backticks
           )+
 
-singleQuote = "'" cs:[^']* "'"
+bareword = cs:barewordChar+
+
+barewordChar
+ = '\\' chr:barewordMeta { return chr }
+ / !barewordMeta chr:.   { return chr }
+
+barewordMeta = [$"';&<>\n()\[\]*?|` ]
+
+singleQuote = "'" inner:$([^']*) "'"
 
 doubleQuote = '"' contents:(expandsInQuotes / doubleQuoteChar+)* '"'
 
 doubleQuoteChar
- = !doubleQuoteMeta chr:.      { return chr }
- / '\\' chr:doubleQuoteMeta    { return chr }
- / '\\' !doubleQuoteMeta chr:. { return '\\' + chr }
+ = '\\' chr:doubleQuoteMeta { debugger; return chr }
+ / '\\\\'                   { debugger; return '\\' }
+ / !doubleQuoteMeta chr:.   { debugger; return chr }
 
-doubleQuoteMeta
- = '"' / '\\' / '$' / '`'
-
-escapedInQuotes
- = '\\' character:[`$"]
+doubleQuoteMeta = '"' / '$' / '`'
 
 expandsInQuotes
  = backticks
@@ -65,23 +74,27 @@ expandsInQuotes
  / variableSubstitution
  / subshell
 
+environmentVariable = '$' name:readableVariableName
+
+writableVariableName = [a-zA-Z0-9_]+
+readableVariableName = writableVariableName / '?'  /* todo, other special vars */
+
+variableSubstitution = '${' expr:[^}]* '}'
+
 backticks
  = '`' commands:(!backticks command)+ '`'
 
 subshell
- = '$(' commands:command+ ')'
+ = '$(' commands:commandList ')'
 
 commandSubstitution
  = rw:[<>] '(' commands:commandList ')'
-
-controlOperator
- = '&&' / '&' / '||' / ';' / '\n'
 
 redirect
  = moveFd / duplicateFd / redirectFd / pipe
 
 pipe =
- "|" space* command:command
+ "|" spaceNL* command:command
 
 moveFd
  = fd:fd? op:('<&' / '>&') dest:fd '-'
@@ -100,3 +113,21 @@ fd
 
 space
  = " " / "\t"
+
+spaceNL
+ = space / "\n"
+
+keyword
+ = ( "while"
+   / "until"
+   / "for"
+   / "done" // "done" must come before "do"
+   / "do"
+   / "case"
+   / "esac"
+   / "if"
+   / "fi" )
+   ( spaceNL+ / EOF )
+
+EOF
+ = !.

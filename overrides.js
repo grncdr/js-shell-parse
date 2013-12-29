@@ -65,14 +65,41 @@ exports.initializer = [
   }
 ].join('\n')
 
-rules.command = function (pre, name, post, control) {
+rules.conditionalLoop = function (kind, testCommands, commands) {
+  return {
+    type: kind + '-loop',
+    testCommands: testCommands,
+    body: commands
+  }
+}
+
+rules.commandList = function (first, rest, last) {
+  var commands = [first]
+  var prev = first
+  map(rest, function (oc, i, cmds) {
+    setOperator(oc[0], prev)
+    commands.push(prev = oc[1])
+  })
+  return commands
+
+  function setOperator(operator, command) {
+    while (command.next) {
+      command = command.next
+    }
+    command.control = operator
+  }
+}
+
+rules.command = function (pre, name, post, next) {
   var command = {
     type: 'command',
     command: name,
     args: [],
     redirects: [],
     env: {},
-    control: control || ';'
+    // these properties are overwritten by the commandList action
+    control: ';',
+    next: null
   }
   map(pre, first).concat(map(post, second)).forEach(function (token) {
     if (!token || !token.type) return
@@ -87,8 +114,19 @@ rules.command = function (pre, name, post, control) {
         command.args.push(token)
     }
   })
+
+  if (next) {
+    command.control = next[0]
+    command.next = next[2]
+  }
+
   return command
 }
+
+rules.commandTerminator = [
+  function logicalTerminator (operator, next) { return [operator, next] },
+  function controlTerminator (operator)       { return [operator, null] },
+]
 
 rules.commandName = function (name) {
   return name
@@ -128,10 +166,12 @@ rules.concatenation = function (pieces) {
   return flattenConcatenation(pieces)
 }
 
-rules.singleQuote = function (cs) { return literal(cs) }
+rules.singleQuote = function (inner) { return literal(inner) }
+
 rules.doubleQuote = function (contents) {
+  debugger
   var pieces = contents.map(function (it) {
-    return isArray(it) ?  literal(it) : it
+    return isArray(it) ? literal(it) : it
   })
   return flattenConcatenation(pieces)
 }

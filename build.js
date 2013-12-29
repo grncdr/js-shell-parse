@@ -20,6 +20,7 @@ function getSource () {
   var parserSource = pegjs.buildParser(grammar, {
     output: "source",
     allowedStartRules: [
+      'script',
       'commandList',
       'command',
       'argument'

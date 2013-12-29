@@ -35,7 +35,8 @@ test('interpolation in quotes', function (t) {
             ],
             redirects: [],
             env: {},
-            control: ';' }
+            control: ';',
+            next: null }
         ]
       }]
     }, "Can interpolate back-ticks (but you really shouldn't!)")
@@ -53,13 +54,15 @@ test('interpolation in quotes', function (t) {
             args: [],
             redirects: [],
             env: {},
-            control: ';' },
+            control: ';',
+            next: null },
           { type: 'command',
             command: { type: 'literal', value: 'command2' },
             args: [],
             redirects: [],
             env: {},
-            control: ';' }
+            control: ';',
+            next: null }
         ]
       }]
     }, "Can interpolate subshells (better idea!)")

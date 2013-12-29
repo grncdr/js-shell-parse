@@ -1,7 +1,7 @@
 var test = require('tape')
 var parse = require('../parser')
 
-test('redirecting stdio', function (t) {
+test('redirecting I/O', function (t) {
   var cmd = parse('transform < fromfile > tofile', 'command')
 
   t.deepEqual(cmd, {
@@ -19,7 +19,8 @@ test('redirecting stdio', function (t) {
         filename: { type: 'literal', value: 'tofile' } }
     ],
     env: {},
-    control: ';'
+    control: ';',
+    next: null
   }, "can redirect stdin and stdout in same command")
 
   t.deepEqual(parse('cmd 6> /dev/null', 'command'), {
@@ -33,7 +34,8 @@ test('redirecting stdio', function (t) {
         filename: { type: 'literal', value: '/dev/null' } }
     ],
     env: {},
-    control: ';'
+    control: ';',
+    next: null
   }, "can redirect arbitrary fd's")
 
   t.deepEqual(parse("> /dev/null cmd", 'command'), {
@@ -47,7 +49,8 @@ test('redirecting stdio', function (t) {
         filename: { type: 'literal', value: '/dev/null' } }
     ],
     env: {},
-    control: ';'
+    control: ';',
+    next: null
   }, 'Can start commands with redirects')
 
 
@@ -66,7 +69,8 @@ test('redirecting stdio', function (t) {
         filename: { type: 'literal', value: '/dev/null' } }
     ],
     env: {},
-    control: ';'
+    control: ';',
+    next: null
   })
   t.end()
 })
