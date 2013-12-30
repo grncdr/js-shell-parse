@@ -5,12 +5,15 @@
   "main": "parser.js",
   "dependencies": {
     "isarray": "0.0.1",
-    "array-map": "0.0.0"
+    "array-map": "0.0.0",
+    "split": "~0.2.10",
+    "duplexer": "~0.1.1",
+    "through2": "~0.2.3"
   },
   "scripts": {
     "test": "tape tests/*.js",
-    "watch-grammar": "node build.js -w &",
-    "prepublish": "node build.js > parser.js"
+    "watch": "npm run prepublish && node build.js -w",
+    "prepublish": "node build.js > peg-parser.js"
   },
   "testling": {
     "files": "tests/*.js",
