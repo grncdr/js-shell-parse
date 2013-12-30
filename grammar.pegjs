@@ -2,6 +2,7 @@ script "one or more statements separated by control operators"
  = first:statement
    rest:(controlOperator statement)*
    last:controlOperator?
+   spaceNL*
 
 statement
  = statement:(command / conditionalLoop / ifBlock) space* next:chainedStatement?
@@ -10,7 +11,7 @@ chainedStatement
  = operator:('&&' / '||') spaceNL* statement:statement
 
 controlOperator
- = op:('&' / ';' / '\n') spaceNL* EOF?
+ = op:('&' / ';' / '\n')
 
 command "a single command"
  = spaceNL*
