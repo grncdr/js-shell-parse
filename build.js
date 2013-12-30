@@ -21,7 +21,6 @@ function getSource () {
     output: "source",
     allowedStartRules: [
       'script',
-      'commandList',
       'command',
       'argument'
     ],

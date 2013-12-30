@@ -73,14 +73,14 @@ rules.conditionalLoop = function (kind, testCommands, commands) {
   }
 }
 
-rules.commandList = function (first, rest, last) {
-  var commands = [first]
+rules.script = function (first, rest, last) {
+  var statements = [first]
   var prev = first
   map(rest, function (oc, i, cmds) {
     setOperator(oc[0], prev)
-    commands.push(prev = oc[1])
+    statements.push(prev = oc[1])
   })
-  return commands
+  return statements
 
   function setOperator(operator, command) {
     while (command.next) {
@@ -90,16 +90,26 @@ rules.commandList = function (first, rest, last) {
   }
 }
 
-rules.command = function (pre, name, post, next) {
+rules.statement = function (statement, next) {
+  if (next) {
+    statement.control = next[0]
+    statement.next = next[1]
+  } else {
+    statement.control = ';'
+    statement.next = null
+  }
+  return statement
+}
+
+rules.command = function (pre, name, post) {
   var command = {
     type: 'command',
     command: name,
     args: [],
     redirects: [],
     env: {},
-    // these properties are overwritten by the commandList action
-    control: ';',
-    next: null
+    next: null,
+    control: ';'
   }
   map(pre, first).concat(map(post, second)).forEach(function (token) {
     if (!token || !token.type) return
@@ -115,25 +125,18 @@ rules.command = function (pre, name, post, next) {
     }
   })
 
-  if (next) {
-    command.control = next[0]
-    command.next = next[2]
-  }
-
   return command
 }
 
-rules.commandTerminator = [
-  function logicalTerminator (operator, next) { return [operator, next] },
-  function controlTerminator (operator)       { return [operator, null] },
-]
+rules.chainedStatement = function (operator, statement) {
+  return [operator, statement]
+}
 
 rules.commandName = function (name) {
   return name
 }
 
-rules.controlOperator = function () {
-  var op = text()
+rules.controlOperator = function (op) {
   return op == '\n' ? ';' : op
 }
 

@@ -34,17 +34,21 @@ test('conditional loop', function (t) {
       env: {},
       control: ";",
       next: null
-    }]
+    }],
+    next: null,
+    control: ';'
   }, "can parse a while loop")
-
-  try {
-    var input = "while echo 1 && do blah; done";
-    parse(input)
-  } catch (err) {
-    t.equal(err.found, "&", 'make sure this is a syntax error')
-  }
 
   var ast = parse('while true && false; do blah; done')
   t.ok(ast[0].testCommands[0].next, "Can use chaining in test-commands")
+
+  try {
+    var input = "while echo 1 && do blah; done";
+    debugger
+    parse(input)
+  } catch (err) {
+    t.pass('make sure this is a syntax error')
+  }
+
   t.end()
 })

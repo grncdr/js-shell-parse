@@ -1,32 +1,32 @@
-script
- = commands:(conditionalLoop / ifBlock / command)+
+script "one or more statements separated by control operators"
+ = first:statement
+   rest:(controlOperator statement)*
+   last:controlOperator?
 
-commandList "one or more commands"
- = first:command rest:(controlOperator command)* last:controlOperator?
+statement
+ = statement:(command / conditionalLoop / ifBlock) space* next:chainedStatement?
+
+chainedStatement
+ = operator:('&&' / '||') spaceNL* statement:statement
+
+controlOperator
+ = op:('&' / ';' / '\n') spaceNL* EOF?
 
 command "a single command"
  = spaceNL*
    pre:((variableAssignment / redirect) space+)*
    name:commandName
    post:(space+ (redirect / argument))*
-   space*
-   next:(logicalOperator spaceNL* command)?
-
-logicalOperator
- = '&&' / '||'
-
-controlOperator
- = '&' / ';' / '\n'
 
 conditionalLoop
- = kind:("while" / "until") spaceNL+ testCommands:commandList spaceNL*
+ = kind:("while" / "until") spaceNL+ testCommands:script spaceNL*
    "do" spaceNL*
-   commands:commandList spaceNL*
+   commands:script spaceNL*
    "done" spaceNL*
 
 ifBlock
- = "if" spaceNL+ testCommands:commandList "then" spaceNL*
-   commands:commandList spaceNL*
+ = "if" spaceNL+ testCommands:script "then" spaceNL*
+   commands:script spaceNL*
    "fi" spaceNL*
 
 variableAssignment
@@ -85,10 +85,10 @@ backticks
  = '`' commands:(!backticks command)+ '`'
 
 subshell
- = '$(' commands:commandList ')'
+ = '$(' commands:script ')'
 
 commandSubstitution
- = rw:[<>] '(' commands:commandList ')'
+ = rw:[<>] '(' commands:script ')'
 
 redirect
  = moveFd / duplicateFd / redirectFd / pipe

@@ -1,8 +1,5 @@
 var test = require('tape')
-var _parse = require('../parser')
-var parse = function (input) {
-  return _parse(input, 'commandList')
-}
+var parse = require('../parser')
 
 test('command sequencing', function (t) {
   var expect = [
@@ -30,11 +27,12 @@ test('command sequencing', function (t) {
     },
   ];
 
-  t.deepEqual(parse('echo ok\necho ok2\n'), expect,
-              'can separate commands with "\\n"')
-
+  debugger
   t.deepEqual(parse('echo ok;echo ok2;'), expect,
               'can separate commands with ";"')
+
+  t.deepEqual(parse('echo ok\necho ok2\n'), expect,
+              'can separate commands with "\\n"')
 
   expect[0].control = '&'
   t.deepEqual(parse('echo ok & echo ok2;'), expect,
