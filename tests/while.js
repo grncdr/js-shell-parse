@@ -2,12 +2,13 @@ var test = require('tape')
 var parse = require('../parser')
 
 test('conditional loop', function (t) {
-  var commands = parse('while true; do echo 1; done')
   t.plan(3)
 
-  t.deepEqual(commands[0], {
+  var statement = parse('while true; do echo 1; done')[0]
+
+  t.deepEqual(statement, {
     type: "while-loop",
-    testCommands: [{
+    test: [{
       type: "command",
       command: {
         type: "literal",
@@ -40,7 +41,7 @@ test('conditional loop', function (t) {
   }, "can parse a while loop")
 
   var ast = parse('while true && false; do blah; done')
-  t.ok(ast[0].testCommands[0].next, "Can use chaining in test-commands")
+  t.ok(ast[0].test[0].next, "Can use chaining in test-commands")
 
   try {
     var input = "while echo 1 && do blah; done";

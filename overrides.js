@@ -65,14 +65,6 @@ exports.initializer = [
   }
 ].join('\n')
 
-rules.conditionalLoop = function (kind, testCommands, commands) {
-  return {
-    type: kind + '-loop',
-    testCommands: testCommands,
-    body: commands
-  }
-}
-
 rules.script = function (first, rest, last) {
   var statements = [first]
   var prev = first
@@ -87,6 +79,32 @@ rules.script = function (first, rest, last) {
       command = command.next
     }
     command.control = operator
+  }
+}
+
+rules.conditionalLoop = function (kind, test, body) {
+  return {
+    type: kind + '-loop',
+    test: test,
+    body: body
+  }
+}
+
+rules.ifBlock = function (test, body, elifBlocks, elseBody) {
+  return {
+    type: 'if-else',
+    test: test,
+    body: body,
+    elifBlocks: elifBlocks.length ? elifBlocks : null,
+    elseBody: elseBody ? elseBody[1] : null,
+  }
+}
+
+rules.elifBlock = function (test, body) {
+  return {
+    type: 'if-else',
+    test: test,
+    body: body
   }
 }
 
@@ -108,8 +126,8 @@ rules.command = function (pre, name, post) {
     args: [],
     redirects: [],
     env: {},
+    control: ';',
     next: null,
-    control: ';'
   }
   map(pre, first).concat(map(post, second)).forEach(function (token) {
     if (!token || !token.type) return

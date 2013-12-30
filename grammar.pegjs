@@ -19,15 +19,20 @@ command "a single command"
    post:(space+ (redirect / argument))*
 
 conditionalLoop
- = kind:("while" / "until") spaceNL+ testCommands:script spaceNL*
+ = kind:("while" / "until") spaceNL+ test:script spaceNL*
    "do" spaceNL*
-   commands:script spaceNL*
+   body:script spaceNL*
    "done" spaceNL*
 
 ifBlock
- = "if" spaceNL+ testCommands:script "then" spaceNL*
-   commands:script spaceNL*
+ = "if" spaceNL+ test:script spaceNL*
+   "then" spaceNL* body:script spaceNL*
+   elifBlocks:elifBlock*
+   elseBody:("else" script)?
    "fi" spaceNL*
+
+elifBlock
+ = "elif" spaceNL+ test:script "then" spaceNL+ body:script
 
 variableAssignment
  = writableVariableName '=' argument
@@ -126,6 +131,9 @@ keyword
    / "case"
    / "esac"
    / "if"
+   / "then"
+   / "else"
+   / "elif"
    / "fi" )
    ( spaceNL+ / EOF )
 
