@@ -47,12 +47,12 @@ argument "command argument"
 
 concatenation
  = pieces:( bareword
-          / singleQuote
-          / doubleQuote
           / environmentVariable
           / variableSubstitution
           / subshell
           / backticks
+          / singleQuote
+          / doubleQuote
           )+
 
 bareword = cs:barewordChar+
@@ -137,6 +137,9 @@ keyword
    / "elif"
    / "fi" )
    ( spaceNL+ / EOF )
+
+continuationStart
+ = &( keyword / '"' / "'" / '`' / "$(" / "${" / "(" ) .*
 
 EOF
  = !.

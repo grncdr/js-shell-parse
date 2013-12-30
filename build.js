@@ -22,7 +22,8 @@ function getSource () {
     allowedStartRules: [
       'script',
       'command',
-      'argument'
+      'argument',
+      'continuationStart'
     ],
     plugins: [overrideAction],
     overrideActionPlugin: require('./overrides')
@@ -53,6 +54,7 @@ function watch () {
       try {
         var source = getSource()
         fs.writeFileSync(output, source)
+        console.error("Wrote " + output)
       } catch (err) {
         console.error(err.message)
       }

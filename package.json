@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "tape tests/*.js",
-    "watch-grammar": "node build.js -w &",
+    "watch": "npm run prepublish && node build.js -w",
     "prepublish": "node build.js > parser.js"
   },
   "testling": {
