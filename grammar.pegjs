@@ -5,7 +5,11 @@ script "one or more statements separated by control operators"
    spaceNL*
 
 statement
- = statement:(command / conditionalLoop / ifBlock) space* next:chainedStatement?
+ = statement:( command
+             / conditionalLoop
+             / ifBlock
+             )
+   space* next:chainedStatement?
 
 chainedStatement
  = operator:('&&' / '||') spaceNL* statement:statement
@@ -35,18 +39,22 @@ ifBlock
 elifBlock
  = "elif" spaceNL+ test:script "then" spaceNL+ body:script
 
+condition
+ = '[' test:script ']'
+
 variableAssignment
  = writableVariableName '=' argument
 
 commandName "command name"
- = !redirect !keyword name:concatenation
+ = !redirect !keyword name:(concatenation / '[')
 
 argument "command argument"
  = commandName
  / commandSubstitution
 
 concatenation
- = pieces:( bareword
+ = pieces:( glob
+          / bareword
           / environmentVariable
           / variableSubstitution
           / subshell
@@ -62,6 +70,14 @@ barewordChar
  / !barewordMeta chr:.   { return chr }
 
 barewordMeta = [$"';&<>\n()\[\]*?|` ]
+
+glob = (barewordChar* ('*' / '?' / characterRange / braceExpansion)+ barewordChar*)+
+
+characterRange =
+ $('[' !'-' . '-' !'-' . ']')
+
+braceExpansion =
+ (.? !'$') '{' barewordChar+ '}'
 
 singleQuote = "'" inner:$([^']*) "'"
 

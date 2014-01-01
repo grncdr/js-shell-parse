@@ -108,6 +108,10 @@ rules.elifBlock = function (test, body) {
   }
 }
 
+rules.condition = function (test) {
+  return test
+}
+
 rules.statement = function (statement, next) {
   if (next) {
     statement.control = next[0]
@@ -180,6 +184,13 @@ rules.variableSubstitution = function () {
 rules.writableVariableName = function () { return text() }
 
 rules.bareword = function (cs) { return literal(cs) }
+
+rules.glob = function (cs) {
+  return {
+    type: 'glob',
+    pattern: text()
+  }
+}
 
 rules.escapedMetaChar = function (character) { return character }
 
