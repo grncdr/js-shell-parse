@@ -1,11 +1,9 @@
 var test = require('tape')
 var xtend = require('xtend')
 var parse = require('../parser')
-var difflet = require('difflet')({indent: 2})
 
 test('if statements', function (t) {
   var input = 'if true; then echo 1; fi'
-  var statement = parse(input)[0]
   var expected = {
     type: "if-else",
     test: [{
@@ -87,6 +85,50 @@ test('if statements', function (t) {
   ]
 
   t.deepEqual(parse(input)[0], expected, input)
+
+  var input = 'if [ -f somefile ]; then echo 1; fi';
+  t.deepEqual(parse(input)[0], {
+    type:"if-else",
+    test:[{
+      type:"command",
+      command: '[',
+      args:[{
+        type:"literal",
+        value:"-f"
+      }, {
+        type:"literal",
+        value:"somefile"
+      }, {
+        type:"literal",
+        value:"]"
+      }],
+      redirects:[],
+      env:{},
+      control:";",
+      next:null
+    }],
+    body:[{
+      type:"command",
+      
+      command:{
+        type:"literal",
+        value:"echo"
+      },
+      args:[{
+        type:"literal",
+        value:"1"
+      }],
+      redirects:[],
+      env:{},
+      control:";",
+      next:null
+    }],
+    elifBlocks:null,
+    elseBody:null,
+    control:";",
+    next:null
+  }, "can parse if statements using '['")
+  
   t.end()
 })
 

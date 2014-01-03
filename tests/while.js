@@ -45,7 +45,6 @@ test('conditional loop', function (t) {
 
   try {
     var input = "while echo 1 && do blah; done";
-    debugger
     parse(input)
   } catch (err) {
     t.pass('make sure this is a syntax error')

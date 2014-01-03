@@ -1,15 +1,17 @@
-script "one or more statements separated by control operators"
+script
+ = sections:(spaceNL* statementList spaceNL*)+
+
+statementList "a list of statements"
  = first:statement
-   rest:(controlOperator statement)*
-   last:controlOperator?
-   spaceNL*
+   rest:(space* controlOperator spaceNL* statement)*
+   last:(space* controlOperator)?
 
 statement
  = statement:( command
              / conditionalLoop
              / ifBlock
              )
-   space* next:chainedStatement?
+   next:(space* chainedStatement)?
 
 chainedStatement
  = operator:('&&' / '||') spaceNL* statement:statement
@@ -18,35 +20,38 @@ controlOperator
  = op:('&' / ';' / '\n')
 
 command "a single command"
- = spaceNL*
-   pre:((variableAssignment / redirect) space+)*
-   name:commandName
+ = pre:((variableAssignment / redirect) space+)*
+   name:(commandName / builtinCommandName)
    post:(space+ (redirect / argument))*
 
 conditionalLoop
- = kind:("while" / "until") spaceNL+ test:script spaceNL*
-   "do" spaceNL*
-   body:script spaceNL*
-   "done" spaceNL*
+ = kind:("while" / "until") spaceNL+ test:condition spaceNL*
+   "do" spaceNL
+   body:script
+   "done"
 
 ifBlock
- = "if" spaceNL+ test:script spaceNL*
-   "then" spaceNL* body:script spaceNL*
+ = "if" spaceNL+ test:script
+   "then" spaceNL+ body:script
    elifBlocks:elifBlock*
    elseBody:("else" script)?
-   "fi" spaceNL*
+   "fi"
 
 elifBlock
- = "elif" spaceNL+ test:script "then" spaceNL+ body:script
+ = "elif" spaceNL+ test:condition "then" spaceNL+ body:script
 
 condition
- = '[' test:script ']'
+ = test:script
 
 variableAssignment
  = writableVariableName '=' argument
 
 commandName "command name"
  = !redirect !keyword name:(concatenation / '[')
+
+builtinCommandName
+ = '['
+ / '[['
 
 argument "command argument"
  = commandName
@@ -63,32 +68,37 @@ concatenation
           / doubleQuote
           )+
 
-bareword = cs:barewordChar+
+bareword
+ = cs:barewordChar+
 
 barewordChar
  = '\\' chr:barewordMeta { return chr }
  / !barewordMeta chr:.   { return chr }
 
-barewordMeta = [$"';&<>\n()\[\]*?|` ]
+barewordMeta = [$"';&<>\n()\[*?|` ]
 
-glob = (barewordChar* ('*' / '?' / characterRange / braceExpansion)+ barewordChar*)+
+glob
+ = barewordChar* ('*' / '?' / characterRange / braceExpansion)+ barewordChar*
 
-characterRange =
- $('[' !'-' . '-' !'-' . ']')
+characterRange
+ = $('[' !'-' . '-' !'-' . ']')
 
-braceExpansion =
- (.? !'$') '{' barewordChar+ '}'
+braceExpansion
+ = (.? !'$') '{' barewordChar+ '}'
 
-singleQuote = "'" inner:$([^']*) "'"
+singleQuote
+ = "'" inner:$([^']*) "'"
 
-doubleQuote = '"' contents:(expandsInQuotes / doubleQuoteChar+)* '"'
+doubleQuote
+ = '"' contents:(expandsInQuotes / doubleQuoteChar+)* '"'
 
 doubleQuoteChar
  = '\\' chr:doubleQuoteMeta { return chr }
  / '\\\\'                   { return '\\' }
  / !doubleQuoteMeta chr:.   { return chr }
 
-doubleQuoteMeta = '"' / '$' / '`'
+doubleQuoteMeta
+ = '"' / '$' / '`'
 
 expandsInQuotes
  = backticks
@@ -107,10 +117,10 @@ backticks
  = '`' commands:(!backticks command)+ '`'
 
 subshell
- = '$(' commands:script ')'
+ = '$(' commands:statementList ')'
 
 commandSubstitution
- = rw:[<>] '(' commands:script ')'
+ = rw:[<>] '(' commands:statementList ')'
 
 redirect
  = moveFd / duplicateFd / redirectFd / pipe
@@ -151,7 +161,9 @@ keyword
    / "then"
    / "else"
    / "elif"
-   / "fi" )
+   / "fi"
+   / "[["
+   )
    ( spaceNL+ / EOF )
 
 continuationStart

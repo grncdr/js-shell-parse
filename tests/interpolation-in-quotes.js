@@ -42,6 +42,7 @@ test('interpolation in quotes', function (t) {
     }, "Can interpolate back-ticks (but you really shouldn't!)")
 
 
+  debugger
   var arg = parse('"interpolated $(command1; command2)"', 'argument')
   t.deepEqual(arg, {
     type: 'concatenation',

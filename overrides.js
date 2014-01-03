@@ -49,9 +49,14 @@ exports.initializer = [
         // it's still a concatenation, append it's pieces to ours
         result = result.concat(current.pieces)
       }
-      else if (current.type == 'literal' && prev.type == 'literal') {
-        // merge two literals
+      else if ((current.type == 'literal' || current.type == 'glob')
+               && (prev.type == 'literal' || prev.type == 'glob')) {
+        // globs & literals can be merged
         prev.value += current.value
+        if (prev.type != 'glob' && current.type == 'glob') {
+          // globs are infectious
+          prev.type = 'glob'
+        }
       }
       else {
         result.push(current)
@@ -65,12 +70,20 @@ exports.initializer = [
   }
 ].join('\n')
 
-rules.script = function (first, rest, last) {
+rules.script = function (sections) {
+  var statements = []
+  map(sections, function (section) {
+    statements = statements.concat(section[1])
+  })
+  return statements
+}
+
+rules.statementList = function (first, rest, last) {
   var statements = [first]
   var prev = first
-  map(rest, function (oc, i, cmds) {
-    setOperator(oc[0], prev)
-    statements.push(prev = oc[1])
+  map(rest, function (spaceOpSpaceCmd, i, cmds) {
+    setOperator(spaceOpSpaceCmd[1], prev)
+    statements.push(prev = spaceOpSpaceCmd[3])
   })
   return statements
 
@@ -108,12 +121,13 @@ rules.elifBlock = function (test, body) {
   }
 }
 
-rules.condition = function (test) {
+rules.condition = function bare (test) {
   return test
 }
 
 rules.statement = function (statement, next) {
-  if (next) {
+  if (typeof next !== 'undefined' && next) {
+    next = next[1]
     statement.control = next[0]
     statement.next = next[1]
   } else {
@@ -188,7 +202,7 @@ rules.bareword = function (cs) { return literal(cs) }
 rules.glob = function (cs) {
   return {
     type: 'glob',
-    pattern: text()
+    value: text()
   }
 }
 
