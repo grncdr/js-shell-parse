@@ -47,7 +47,9 @@ variableAssignment
  = writableVariableName '=' argument
 
 commandName "command name"
- = !redirect !keyword name:(concatenation / '[')
+ = !redirect
+   !keyword
+   name:(concatenation / builtinCommandName)
 
 builtinCommandName
  = '['
@@ -55,15 +57,14 @@ builtinCommandName
 
 argument "command argument"
  = commandName
- / commandSubstitution
+ / processSubstitution
 
 concatenation
  = pieces:( glob
           / bareword
           / environmentVariable
           / variableSubstitution
-          / subshell
-          / backticks
+          / commandSubstitution
           / singleQuote
           / doubleQuote
           )+
@@ -101,10 +102,9 @@ doubleQuoteMeta
  = '"' / '$' / '`'
 
 expandsInQuotes
- = backticks
+ = commandSubstitution
  / environmentVariable
  / variableSubstitution
- / subshell
 
 environmentVariable = '$' name:readableVariableName
 
@@ -113,13 +113,11 @@ readableVariableName = writableVariableName / '?'  /* todo, other special vars *
 
 variableSubstitution = '${' expr:[^}]* '}'
 
-backticks
- = '`' commands:(!backticks command)+ '`'
-
-subshell
- = '$(' commands:statementList ')'
-
 commandSubstitution
+ = '`' commands:statementList '`'
+ / '$(' commands:statementList ')'
+
+processSubstitution
  = rw:[<>] '(' commands:statementList ')'
 
 redirect

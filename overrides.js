@@ -176,9 +176,9 @@ rules.controlOperator = function (op) {
   return op == '\n' ? ';' : op
 }
 
-rules.commandSubstitution = function (rw)  {
+rules.processSubstitution = function (rw)  {
   return {
-    type: 'command-substitution',
+    type: 'process-substitution',
     readWrite: rw,
     commands: commands,
   }
@@ -224,12 +224,17 @@ rules.doubleQuote = function (contents) {
 rules.escapedQuote = function (character) {
   return character
 }
-rules.backticks = function (commands) {
-  return {type: 'backticks', commands: commands.map(second)}
-}
 
-rules.subshell = function (commands) {
-  return {type: 'subshell', commands: commands}
+rules.commandSubstitution = [
+  commandSubstitution,
+  commandSubstitution,
+]
+
+function commandSubstitution (commands) {
+  return {
+    type: 'command-substitution',
+    commands: commands
+  }
 }
 
 /** stdio redirection */

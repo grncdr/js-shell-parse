@@ -26,7 +26,7 @@ test('interpolation in quotes', function (t) {
     type: 'concatenation',
     pieces: [
       { type: "literal", value:"interpolated " },
-      { type: "backticks",
+      { type: "command-substitution",
         commands: [
           { type: 'command',
             command: { type: 'literal', value: 'backtick' },
@@ -41,14 +41,12 @@ test('interpolation in quotes', function (t) {
       }]
     }, "Can interpolate back-ticks (but you really shouldn't!)")
 
-
-  debugger
   var arg = parse('"interpolated $(command1; command2)"', 'argument')
   t.deepEqual(arg, {
     type: 'concatenation',
     pieces: [
       { type: "literal", value:"interpolated " },
-      { type: "subshell",
+      { type: "command-substitution",
         commands: [
           { type: 'command',
             command: { type: 'literal', value: 'command1' },

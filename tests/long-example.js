@@ -17,7 +17,7 @@ test('long example', function (t) {
     },
     "args": [
       {
-      "type": "command-substitution",
+      "type": "process-substitution",
       "readWrite": ">",
       "commands": [
         {
