@@ -114,8 +114,18 @@ readableVariableName = writableVariableName / '?'  /* todo, other special vars *
 variableSubstitution = '${' expr:[^}]* '}'
 
 commandSubstitution
- = '`' commands:statementList '`'
- / '$(' commands:statementList ')'
+ = parenCommandSubstitution / backQuote
+
+parenCommandSubstitution
+ = '$(' commands:statementList ')'
+
+backQuote
+ = '`' input:backQuoteChar+ '`'
+
+backQuoteChar
+ = '\\`'      { return '`' }
+ / '\\\\'     { return '\\' }
+ / !'`' chr:. { return chr }
 
 processSubstitution
  = rw:[<>] '(' commands:statementList ')'

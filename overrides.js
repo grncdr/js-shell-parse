@@ -225,15 +225,18 @@ rules.escapedQuote = function (character) {
   return character
 }
 
-rules.commandSubstitution = [
-  commandSubstitution,
-  commandSubstitution,
-]
-
-function commandSubstitution (commands) {
+rules.parenCommandSubstitution = function (commands) {
   return {
     type: 'command-substitution',
     commands: commands
+  }
+}
+
+rules.backQuote = function (input) {
+  var statements = parse(input.join(''))
+  return {
+    type: 'command-substitution',
+    commands: statements
   }
 }
 
