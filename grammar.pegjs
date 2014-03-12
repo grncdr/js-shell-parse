@@ -23,6 +23,7 @@ command "a single command"
  = pre:((variableAssignment / redirect) space+)*
    name:(commandName / builtinCommandName)
    post:(space+ (redirect / argument))*
+   pipe:(space* pipe)?
 
 conditionalLoop
  = kind:("while" / "until") spaceNL+ test:condition spaceNL*
@@ -131,7 +132,7 @@ processSubstitution
  = rw:[<>] '(' commands:statementList ')'
 
 redirect
- = moveFd / duplicateFd / redirectFd / pipe
+ = moveFd / duplicateFd / redirectFd
 
 pipe =
  "|" spaceNL* command:command
@@ -140,7 +141,7 @@ moveFd
  = fd:fd? op:('<&' / '>&') dest:fd '-'
 
 duplicateFd
- = fd:fd? op:('<&' / '>&') space* filename:argument
+ = src:fd? op:('<&' / '>&') space* dest:fd
 
 redirectFd
  = fd:fd? op:redirectionOperator space* filename:argument

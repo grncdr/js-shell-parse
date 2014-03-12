@@ -137,7 +137,7 @@ rules.statement = function (statement, next) {
   return statement
 }
 
-rules.command = function (pre, name, post) {
+rules.command = function (pre, name, post, pipe) {
   var command = {
     type: 'command',
     command: name,
@@ -147,13 +147,13 @@ rules.command = function (pre, name, post) {
     control: ';',
     next: null,
   }
+
   map(pre, first).concat(map(post, second)).forEach(function (token) {
     if (!token || !token.type) return
     switch (token.type) {
       case 'moveFd':
       case 'duplicateFd':
       case 'redirectFd':
-      case 'pipe':
         return command.redirects.push(token)
       case 'assignment':
         return command.env[token.name] = token.value
@@ -161,6 +161,10 @@ rules.command = function (pre, name, post) {
         command.args.push(token)
     }
   })
+
+  if (pipe) {
+    command.redirects.push(pipe[1])
+  }
 
   return command
 }

@@ -98,7 +98,7 @@ var parser=(function() {
           return op == '\n' ? ';' : op
         },
         peg$c19 = { type: "other", description: "a single command" },
-        peg$c20 = function(pre, name, post) {
+        peg$c20 = function(pre, name, post, pipe) {
           var command = {
             type: 'command',
             command: name,
@@ -108,13 +108,13 @@ var parser=(function() {
             control: ';',
             next: null,
           }
+
           map(pre, first).concat(map(post, second)).forEach(function (token) {
             if (!token || !token.type) return
             switch (token.type) {
               case 'moveFd':
               case 'duplicateFd':
               case 'redirectFd':
-              case 'pipe':
                 return command.redirects.push(token)
               case 'assignment':
                 return command.env[token.name] = token.value
@@ -122,6 +122,10 @@ var parser=(function() {
                 command.args.push(token)
             }
           })
+
+          if (pipe) {
+            command.redirects.push(pipe[1])
+          }
 
           return command
         },
@@ -290,7 +294,7 @@ var parser=(function() {
             dest: dest
           }
         },
-        peg$c120 = function(fd, op, filename) {
+        peg$c120 = function(src, op, dest) {
           if (src == null) src = op[0] == '<' ? 0 : 1;
           return {
             type: 'duplicateFd',
@@ -983,9 +987,37 @@ var parser=(function() {
             }
           }
           if (s3 !== peg$FAILED) {
-            peg$reportedPos = s0;
-            s1 = peg$c20(s1, s2, s3);
-            s0 = s1;
+            s4 = peg$currPos;
+            s5 = [];
+            s6 = peg$parsespace();
+            while (s6 !== peg$FAILED) {
+              s5.push(s6);
+              s6 = peg$parsespace();
+            }
+            if (s5 !== peg$FAILED) {
+              s6 = peg$parsepipe();
+              if (s6 !== peg$FAILED) {
+                s5 = [s5, s6];
+                s4 = s5;
+              } else {
+                peg$currPos = s4;
+                s4 = peg$c1;
+              }
+            } else {
+              peg$currPos = s4;
+              s4 = peg$c1;
+            }
+            if (s4 === peg$FAILED) {
+              s4 = peg$c4;
+            }
+            if (s4 !== peg$FAILED) {
+              peg$reportedPos = s0;
+              s1 = peg$c20(s1, s2, s3, s4);
+              s0 = s1;
+            } else {
+              peg$currPos = s0;
+              s0 = peg$c1;
+            }
           } else {
             peg$currPos = s0;
             s0 = peg$c1;
@@ -2547,9 +2579,6 @@ var parser=(function() {
         s0 = peg$parseduplicateFd();
         if (s0 === peg$FAILED) {
           s0 = peg$parseredirectFd();
-          if (s0 === peg$FAILED) {
-            s0 = peg$parsepipe();
-          }
         }
       }
 
@@ -2688,7 +2717,7 @@ var parser=(function() {
             s4 = peg$parsespace();
           }
           if (s3 !== peg$FAILED) {
-            s4 = peg$parseargument();
+            s4 = peg$parsefd();
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
               s1 = peg$c120(s1, s2, s4);
