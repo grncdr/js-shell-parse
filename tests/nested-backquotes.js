@@ -5,7 +5,7 @@ test('nesting backquotes', function (t) {
   var arg = parse('`outer \\`middle \\\\\\`inner\\\\\\`\\``', 'argument')
 
   var inner = {
-    type: "command-substitution",
+    type: "commandSubstitution",
     commands: [
       {
         type: 'command',
@@ -23,7 +23,7 @@ test('nesting backquotes', function (t) {
   }
 
   var middle = {
-    type: "command-substitution",
+    type: "commandSubstitution",
     commands: [
       {
         type: 'command',
@@ -41,7 +41,7 @@ test('nesting backquotes', function (t) {
   }
 
   t.deepEqual(arg, {
-    type: 'command-substitution',
+    type: 'commandSubstitution',
     commands: [
       {
         type: 'command',

@@ -17,7 +17,7 @@ test('interpolation in quotes', function (t) {
     type: 'concatenation',
     pieces: [
       { type: "literal", value: "interpolated " },
-      { type: "variable-substitution", expression: "variable/sub/rep" }
+      { type: "variableSubstitution", expression: "variable/sub/rep" }
     ]
   }, "Can interpolate variables substitutions")
 
@@ -26,7 +26,7 @@ test('interpolation in quotes', function (t) {
     type: 'concatenation',
     pieces: [
       { type: "literal", value:"interpolated " },
-      { type: "command-substitution",
+      { type: "commandSubstitution",
         commands: [
           { type: 'command',
             command: { type: 'literal', value: 'backtick' },
@@ -38,15 +38,16 @@ test('interpolation in quotes', function (t) {
             control: ';',
             next: null }
         ]
-      }]
-    }, "Can interpolate back-ticks (but you really shouldn't!)")
+      }
+    ]
+  }, "Can interpolate backTicks (but you really shouldn't!)")
 
   var arg = parse('"interpolated $(command1; command2)"', 'argument')
   t.deepEqual(arg, {
     type: 'concatenation',
     pieces: [
       { type: "literal", value:"interpolated " },
-      { type: "command-substitution",
+      { type: "commandSubstitution",
         commands: [
           { type: 'command',
             command: { type: 'literal', value: 'command1' },
@@ -64,7 +65,7 @@ test('interpolation in quotes', function (t) {
             next: null }
         ]
       }]
-    }, "Can interpolate subshells (better idea!)")
+    }, "Can interpolate commands with $() (better idea!)")
 
   t.end()
 })

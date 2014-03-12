@@ -9,11 +9,11 @@ test('redirecting I/O', function (t) {
     command: { type: 'literal', value: 'transform' },
     args: [],
     redirects: [
-      { type: 'redirect-fd',
+      { type: 'redirectFd',
         fd: 0,
         op: '<',
         filename: { type: 'literal', value: 'fromfile' } },
-      { type: 'redirect-fd',
+      { type: 'redirectFd',
         fd: 1,
         op: '>',
         filename: { type: 'literal', value: 'tofile' } }
@@ -28,7 +28,7 @@ test('redirecting I/O', function (t) {
     command: { type: 'literal', value: 'cmd' },
     args: [],
     redirects: [
-      { type: 'redirect-fd',
+      { type: 'redirectFd',
         fd: 6,
         op: '>',
         filename: { type: 'literal', value: '/dev/null' } }
@@ -43,7 +43,7 @@ test('redirecting I/O', function (t) {
     command: { type: 'literal', value: 'cmd' },
     args: [],
     redirects: [
-      { type: 'redirect-fd',
+      { type: 'redirectFd',
         fd: 1,
         op: '>',
         filename: { type: 'literal', value: '/dev/null' } }
@@ -59,11 +59,11 @@ test('redirecting I/O', function (t) {
     command: { type: 'literal', value: 'cmd' },
     args: [],
     redirects: [
-      { type: 'duplicate-fd',
-        fd: 2,
+      { type: 'duplicateFd',
+        srcFd: 2,
         op: '>&',
-        filename: { type: 'literal', value: '1' } },
-      { type: 'redirect-fd',
+        destFd: 1 },
+      { type: 'redirectFd',
         fd: 1,
         op: '>',
         filename: { type: 'literal', value: '/dev/null' } }

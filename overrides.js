@@ -105,7 +105,7 @@ rules.conditionalLoop = function (kind, test, body) {
 
 rules.ifBlock = function (test, body, elifBlocks, elseBody) {
   return {
-    type: 'if-else',
+    type: 'ifElse',
     test: test,
     body: body,
     elifBlocks: elifBlocks.length ? elifBlocks : null,
@@ -115,7 +115,7 @@ rules.ifBlock = function (test, body, elifBlocks, elseBody) {
 
 rules.elifBlock = function (test, body) {
   return {
-    type: 'if-else',
+    type: 'ifElse',
     test: test,
     body: body
   }
@@ -150,9 +150,10 @@ rules.command = function (pre, name, post) {
   map(pre, first).concat(map(post, second)).forEach(function (token) {
     if (!token || !token.type) return
     switch (token.type) {
-      case 'move-fd':
-      case 'duplicate-fd':
-      case 'redirect-fd':
+      case 'moveFd':
+      case 'duplicateFd':
+      case 'redirectFd':
+      case 'pipe':
         return command.redirects.push(token)
       case 'assignment':
         return command.env[token.name] = token.value
@@ -178,7 +179,7 @@ rules.controlOperator = function (op) {
 
 rules.processSubstitution = function (rw)  {
   return {
-    type: 'process-substitution',
+    type: 'processSubstitution',
     readWrite: rw,
     commands: commands,
   }
@@ -190,8 +191,8 @@ rules.environmentVariable  = function () {
 
 rules.variableSubstitution = function () {
   return {
-    type:        'variable-substitution',
-    expression:  join(expr), // TODO sub-parser
+    type:        'variableSubstitution',
+    expression:  join(expr), // TODO subParser
   }
 }
 
@@ -227,20 +228,15 @@ rules.escapedQuote = function (character) {
 
 rules.parenCommandSubstitution = function (commands) {
   return {
-    type: 'command-substitution',
+    type: 'commandSubstitution',
     commands: commands
   }
 }
 
 rules.backQuote = function (input) {
-  var statements = parse(input.join(''))
-  return {
-    type: 'command-substitution',
-    commands: statements
-  }
+  return { type: 'commandSubstitution', commands: parse(input.join('')) }
 }
 
-/** stdio redirection */
 rules.pipe = function (command) {
   return {type: 'pipe', command: command}
 }
@@ -248,27 +244,27 @@ rules.pipe = function (command) {
 rules.moveFd = function (fd, op, dest) {
   if (fd == null) fd = op[0] == '<' ? 0 : 1;
   return {
-    type: 'move-fd',
+    type: 'moveFd',
     fd: fd,
     op: op,
     dest: dest
   }
 }
 
-rules.duplicateFd = function (fd, op, filename) {
-  if (fd == null) fd = op[0] == '<' ? 0 : 1;
+rules.duplicateFd = function (src, op, dest) {
+  if (src == null) src = op[0] == '<' ? 0 : 1;
   return {
-    type: 'duplicate-fd',
-    fd: fd,
+    type: 'duplicateFd',
+    srcFd: src,
     op: op,
-    filename: filename
+    destFd: dest,
   }
 }
 
 rules.redirectFd = function (fd, op, filename) {
   if (fd == null) fd = op[0] == '<' ? 0 : 1;
   return {
-    type: 'redirect-fd',
+    type: 'redirectFd',
     fd: fd,
     op: op,
     filename: filename

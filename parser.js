@@ -111,9 +111,10 @@ var parser=(function() {
           map(pre, first).concat(map(post, second)).forEach(function (token) {
             if (!token || !token.type) return
             switch (token.type) {
-              case 'move-fd':
-              case 'duplicate-fd':
-              case 'redirect-fd':
+              case 'moveFd':
+              case 'duplicateFd':
+              case 'redirectFd':
+              case 'pipe':
                 return command.redirects.push(token)
               case 'assignment':
                 return command.env[token.name] = token.value
@@ -149,7 +150,7 @@ var parser=(function() {
         peg$c37 = { type: "literal", value: "fi", description: "\"fi\"" },
         peg$c38 = function(test, body, elifBlocks, elseBody) {
           return {
-            type: 'if-else',
+            type: 'ifElse',
             test: test,
             body: body,
             elifBlocks: elifBlocks.length ? elifBlocks : null,
@@ -160,7 +161,7 @@ var parser=(function() {
         peg$c40 = { type: "literal", value: "elif", description: "\"elif\"" },
         peg$c41 = function(test, body) {
           return {
-            type: 'if-else',
+            type: 'ifElse',
             test: test,
             body: body
           }
@@ -240,8 +241,8 @@ var parser=(function() {
         peg$c96 = { type: "class", value: "[^}]", description: "[^}]" },
         peg$c97 = function(expr) {
           return {
-            type:        'variable-substitution',
-            expression:  join(expr), // TODO sub-parser
+            type:        'variableSubstitution',
+            expression:  join(expr), // TODO subParser
           }
         },
         peg$c98 = "$(",
@@ -250,16 +251,12 @@ var parser=(function() {
         peg$c101 = { type: "literal", value: ")", description: "\")\"" },
         peg$c102 = function(commands) {
           return {
-            type: 'command-substitution',
+            type: 'commandSubstitution',
             commands: commands
           }
         },
         peg$c103 = function(input) {
-          var statements = parse(input.join(''))
-          return {
-            type: 'command-substitution',
-            commands: statements
-          }
+          return { type: 'commandSubstitution', commands: parse(input.join('')) }
         },
         peg$c104 = "\\`",
         peg$c105 = { type: "literal", value: "\\`", description: "\"\\\\`\"" },
@@ -270,7 +267,7 @@ var parser=(function() {
         peg$c110 = { type: "literal", value: "(", description: "\"(\"" },
         peg$c111 = function(rw, commands) {
           return {
-            type: 'process-substitution',
+            type: 'processSubstitution',
             readWrite: rw,
             commands: commands,
           }
@@ -287,25 +284,25 @@ var parser=(function() {
         peg$c119 = function(fd, op, dest) {
           if (fd == null) fd = op[0] == '<' ? 0 : 1;
           return {
-            type: 'move-fd',
+            type: 'moveFd',
             fd: fd,
             op: op,
             dest: dest
           }
         },
         peg$c120 = function(fd, op, filename) {
-          if (fd == null) fd = op[0] == '<' ? 0 : 1;
+          if (src == null) src = op[0] == '<' ? 0 : 1;
           return {
-            type: 'duplicate-fd',
-            fd: fd,
+            type: 'duplicateFd',
+            srcFd: src,
             op: op,
-            filename: filename
+            destFd: dest,
           }
         },
         peg$c121 = function(fd, op, filename) {
           if (fd == null) fd = op[0] == '<' ? 0 : 1;
           return {
-            type: 'redirect-fd',
+            type: 'redirectFd',
             fd: fd,
             op: op,
             filename: filename

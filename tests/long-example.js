@@ -3,76 +3,67 @@ var parse = require('../parser')
 
 test('long example', function (t) {
   var input = [
-    "blah >(substitute-command --with args)",
+    "blah >(substituteCommand --with args)",
     "first | second",
-    "echo ${what/hot/not} ok 'single-quoted arg'\"double-quoted $var\" > here",
+    "echo ${what/hot/not} ok 'singleQuoted arg'\"doubleQuoted $var\" > here",
   ].join('\n')
 
-  t.deepEqual(parse(input), [
-    {
+  t.deepEqual(parse(input), [{
     "type": "command",
     "command": {
       "type": "literal",
       "value": "blah"
     },
-    "args": [
-      {
-      "type": "process-substitution",
+    "args": [{
+      "type": "processSubstitution",
       "readWrite": ">",
-      "commands": [
-        {
+      "commands": [{
         "type": "command",
         "command": {
           "type": "literal",
-          "value": "substitute-command"
+          "value": "substituteCommand"
         },
-        "args": [
-          {
+        "args": [{
           "type": "literal",
           "value": "--with"
-        },
-        {
+        }, {
           "type": "literal",
           "value": "args"
-        }
-        ],
+        }],
         "redirects": [],
         "env": {},
         "control": ";",
         "next": null
-      }
-      ]
-    }
-    ],
+      }]
+    }],
     "redirects": [],
     "env": {},
     "control": ";",
     "next": null
-  },
-  {
+  }, {
     "type": "command",
     "command": {
       "type": "literal",
       "value": "first"
     },
-    "args": [
+    "args": [],
+    "redirects": [
       {
-      "type": "pipe",
-      "command": {
-        "type": "command",
+        "type": "pipe",
         "command": {
-          "type": "literal",
-          "value": "second"
-        },
-        "args": [],
-        "redirects": [],
-        "env": {},
-        "control": ";",
-        "next": null
+          "type": "command",
+          "command": {
+            "type": "literal",
+            "value": "second"
+          },
+          "args": [],
+          "redirects": [],
+          "env": {},
+          "control": ";",
+          "next": null
+        }
       }
-    }
     ],
-    "redirects": [],
     "env": {},
     "control": ";",
     "next": null
@@ -83,44 +74,34 @@ test('long example', function (t) {
       "type": "literal",
       "value": "echo"
     },
-    "args": [
-      {
-      "type": "variable-substitution",
+    "args": [{
+      "type": "variableSubstitution",
       "expression": "what/hot/not"
-    },
-    {
+    }, {
       "type": "literal",
       "value": "ok"
-    },
-    {
+    }, {
       "type": "concatenation",
-      "pieces": [
-        {
+      "pieces": [{
         "type": "literal",
-        "value": "single-quoted arg"
-      },
-      {
+        "value": "singleQuoted arg"
+      }, {
         "type": "literal",
-        "value": "double-quoted "
-      },
-      {
+        "value": "doubleQuoted "
+      }, {
         "type": "variable",
         "name": "var"
-      }
-      ]
-    }
-    ],
-    "redirects": [
-      {
-      "type": "redirect-fd",
+      }]
+    }],
+    "redirects": [{
+      "type": "redirectFd",
       "fd": 1,
       "op": ">",
       "filename": {
         "type": "literal",
         "value": "here"
       }
-    }
-    ],
+    }],
     "env": {},
     "control": ";",
     "next": null

@@ -5,7 +5,7 @@ var parse = require('../parser')
 test('if statements', function (t) {
   var input = 'if true; then echo 1; fi'
   var expected = {
-    type: "if-else",
+    type: "ifElse",
     test: [{
       type: "command",
       command: {
@@ -59,7 +59,7 @@ test('if statements', function (t) {
   expected = clone(expected)
   expected.elifBlocks = [
     {
-      type: 'if-else',
+      type: 'ifElse',
       test: [{
         type: "command",
         command: {
@@ -88,7 +88,7 @@ test('if statements', function (t) {
 
   var input = 'if [ -f somefile ]; then echo 1; fi';
   t.deepEqual(parse(input)[0], {
-    type:"if-else",
+    type:"ifElse",
     test:[{
       type:"command",
       command: '[',
