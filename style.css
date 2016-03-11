@@ -1,0 +1,17 @@
+html, body {
+  font-family: monospace;
+  height: 100%;
+}
+#input, #output {
+  white-space: pre;
+  display: block;
+  float: left;
+  overflow: auto;
+  height: 50%;
+  width: 45%;
+}
+#error {
+  clear: both;
+  display: block;
+  color: red;
+}
