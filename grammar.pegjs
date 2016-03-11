@@ -8,6 +8,7 @@ statementList "a list of statements"
 
 statement
  = statement:( command
+             / variableAssignment
              / conditionalLoop
              / ifBlock
              )
@@ -45,11 +46,12 @@ condition
  = test:script
 
 variableAssignment
- = writableVariableName '=' argument
+ = name:writableVariableName '=' value:argument
 
 commandName "command name"
  = !redirect
    !keyword
+   !variableAssignment
    name:(concatenation / builtinCommandName)
 
 builtinCommandName
@@ -176,7 +178,7 @@ keyword
    ( spaceNL+ / EOF )
 
 continuationStart
- = &( keyword / '"' / "'" / '`' / "$(" / "${" / "(" ) .*
+ = &( keyword / '"' / "'" / '`' / "$(" / "${" ) .*
 
 EOF
  = !.

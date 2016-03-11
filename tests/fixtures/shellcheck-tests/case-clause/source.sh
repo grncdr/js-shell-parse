@@ -1,0 +1,1 @@
+case foo in a ) lol; cow;; b|d) fooo; esac

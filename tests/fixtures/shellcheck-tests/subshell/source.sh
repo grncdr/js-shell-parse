@@ -1,0 +1,1 @@
+( cd /foo; tar cf stuff.tar * )

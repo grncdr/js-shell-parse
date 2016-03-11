@@ -1,0 +1,2 @@
+cat <( # nothing here 
+)

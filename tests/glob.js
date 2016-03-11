@@ -6,13 +6,11 @@ test('globs', function (t) {
     type: 'glob',
     value: 'thing*/**.whatever',
   }, "Can parse * globs")
-  t.end()
 
   t.deepEqual(parse('thing-??.txt', 'argument'), {
     type: 'glob',
     value: 'thing-??.txt',
   }, "Can parse ? globs")
-  t.end()
 
   t.deepEqual(parse('thing-[1-3][0-9].txt', 'argument'), {
     type: 'glob',

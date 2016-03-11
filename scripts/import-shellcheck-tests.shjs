@@ -1,0 +1,58 @@
+#!/usr/bin/env shjs
+require('shelljs/global')
+
+set('-e')
+
+var path = require('path')
+
+cd(path.join(__dirname, '..'))
+
+exec('npm i kebab-case')
+var kebabCase = require('kebab-case')
+
+if (exec('git --git-dir ../shellcheck/.git rev-parse 2>/dev/null').code !== 0) {
+  pushd('..')
+  exec('git clone git://github.com/koalaman/shellcheck')
+  popd()
+}
+
+cat('../shellcheck/ShellCheck/Parser.hs').split('\n').forEach(function (line) {
+  if (line.startsWith('prop')) {
+    var testString = /"(?:\\"|[^"])*"$/.exec(line)[0]
+
+    // tweak the haskell string so it's valid json
+    var testSource = JSON.parse(testString
+      .replace(/\\x([0-9A-F]{4})/g, '\\u$1')
+      .replace(/\\x([0-9A-F]{2})/g, '\\u00$1')
+      .replace(/\\\\\\'/, "\\\\'"))
+
+    // ignore annotation tests
+    if (/# ?shellcheck/.test(testSource)) return
+    // ksh
+    if (/\breadDollarBraceCommandExpansion\b/.test(testSource)) return
+
+    if (/\breadArithmeticContents\b/.test(line)) {
+      testSource = '((' + testSource + '))'
+    } else if (/\breadProcSub\b/.test(line)) {
+      testSource = 'cat ' + testSource
+    } else if (/\b\(readBackTicked False\)\b|\bread(?:Dollar[A-Z]\w*|Glob|Extglob|Braced)\b/.test(line)) {
+      testSource = 'echo ' + testSource
+    }
+
+    // echo(testSource)
+
+    var dir = /^prop_?([a-zA-Z0-9]+)/.exec(line)[1];
+    if (/a[0-9]/.test(dir)) dir = 'arithmetic' + dir.slice(1)
+    dir = kebabCase(dir)
+    dir = dir.replace(/^read-?/, '')
+    dir = path.join('tests/fixtures/shellcheck-tests', dir)
+
+    mkdir('-p', dir)
+
+    testSource.to(path.join(dir, 'source.sh'))
+
+    if (/\bisNotOk\b/.test(line)) {
+      '{}\n'.to(path.join(dir, 'error.json'))
+    }
+  }
+})

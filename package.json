@@ -1,6 +1,6 @@
 {
   "name": "shell-parse",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "Parse bash scripts into AST's",
   "main": "parser.js",
   "dependencies": {
@@ -36,8 +36,7 @@
   "devDependencies": {
     "pegjs": "~0.8.0",
     "pegjs-override-action": "0.0.7",
-    "tape": "~2.3.2",
-    "covert": "~0.2.0",
+    "tape": "^4.5.1",
     "markdown-code-blocks": "0.0.1",
     "xtend": "~2.1.1"
   },

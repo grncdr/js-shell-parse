@@ -1,0 +1,1 @@
+time if true; then echo foo; fi

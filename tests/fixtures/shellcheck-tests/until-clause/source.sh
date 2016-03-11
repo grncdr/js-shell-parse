@@ -1,0 +1,1 @@
+until kill -0 $PID; do sleep 1; done

@@ -155,7 +155,7 @@ rules.command = function (pre, name, post, pipe) {
       case 'duplicateFd':
       case 'redirectFd':
         return command.redirects.push(token)
-      case 'assignment':
+      case 'variableAssignment':
         return command.env[token.name] = token.value
       default:
         command.args.push(token)
@@ -193,11 +193,24 @@ rules.environmentVariable  = function () {
   return {type: 'variable', name: name}
 }
 
+rules.variableAssignment = function () {
+  name, val
+  return {
+    type: 'assignment',
+    name: name,
+    value: val
+  }
+}
+
 rules.variableSubstitution = function () {
   return {
     type:        'variableSubstitution',
     expression:  join(expr), // TODO subParser
   }
+}
+
+rules.variableAssignment = function (name, value) {
+  return {type: 'variableAssignment', name: name, value: value}
 }
 
 rules.writableVariableName = function () { return text() }

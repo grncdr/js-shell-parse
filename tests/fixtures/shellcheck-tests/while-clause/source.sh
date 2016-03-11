@@ -1,0 +1,1 @@
+while [[ -e foo ]]; do sleep 1; done
