@@ -3136,15 +3136,6 @@ var parser=(function() {
                   s2 = peg$FAILED;
                   if (peg$silentFails === 0) { peg$fail(peg$c95); }
                 }
-                if (s2 === peg$FAILED) {
-                  if (input.charCodeAt(peg$currPos) === 40) {
-                    s2 = peg$c110;
-                    peg$currPos++;
-                  } else {
-                    s2 = peg$FAILED;
-                    if (peg$silentFails === 0) { peg$fail(peg$c111); }
-                  }
-                }
               }
             }
           }

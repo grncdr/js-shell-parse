@@ -178,7 +178,7 @@ keyword
    ( spaceNL+ / EOF )
 
 continuationStart
- = &( keyword / '"' / "'" / '`' / "$(" / "${" / "(" ) .*
+ = &( keyword / '"' / "'" / '`' / "$(" / "${" ) .*
 
 EOF
  = !.

@@ -1,7 +1,7 @@
 var test = require('tape')
 var parse = require('../parser')
 
-test('partial input', function (t) {
+test('expected errors', function (t) {
   // These should all produce syntax errors at the given position
   var examples = [
     { input: "echo ( this will fail", position: 5 }
@@ -17,14 +17,15 @@ test('partial input', function (t) {
         t.equal(err.constructor, parse.SyntaxError, 'threw expected SyntaxError')
         t.equal(example.position, err.offset, 'SyntaxError has expected offset')
         try {
-          parse(example.input.substr(err.offset), 'continuationStart')
-          t.fail('was successfully parsed as a continuationStart')
+          var result = parse(example.input.substr(err.offset), 'continuationStart')
+          t.fail('Open paren was parsed as a continuationStart, this is wrong')
+          console.log(result)
         } catch (e) {
-          t.pass('could not parse continuationStart')
+          t.pass('unbalanced open paren is syntax error')
         }
       }
+
+      t.end()
     })
   })
-
-  t.end()
 })
