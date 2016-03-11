@@ -4,7 +4,7 @@ Parse bash scripts into AST's
 
 ## Synopsis
 
-```ocaml
+```js
 var parse = require('shell-parse')
 parse('echo $PATH') //=> an ugly AST object
 ```
