@@ -2,12 +2,14 @@ html, body {
   font-family: monospace;
   height: 100%;
 }
+#input {
+  min-height: 4em;
+}
+
 #input, #output {
   white-space: pre;
   display: block;
   float: left;
-  overflow: auto;
-  height: 50%;
   width: 45%;
 }
 #error {
