@@ -53,7 +53,7 @@ function watch () {
     if (curr.mtime > prev.mtime) {
       try {
         var source = getSource()
-        fs.writeFileSync(output, source)
+        fs.writeFileSync(output, source + '\n')
         console.error("Wrote " + output)
       } catch (err) {
         console.error(err.message)
