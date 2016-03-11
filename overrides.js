@@ -193,6 +193,15 @@ rules.environmentVariable  = function () {
   return {type: 'variable', name: name}
 }
 
+rules.variableAssignment = function () {
+  name, val
+  return {
+    type: 'assignment',
+    name: name,
+    value: val
+  }
+}
+
 rules.variableSubstitution = function () {
   return {
     type:        'variableSubstitution',
