@@ -136,9 +136,6 @@ processSubstitution
 redirect
  = moveFd / duplicateFd / redirectFd
 
-pipe =
- "|" spaceNL* command:command
-
 moveFd
  = fd:fd? op:('<&' / '>&') dest:fd '-'
 
@@ -149,10 +146,13 @@ redirectFd
  = fd:fd? op:redirectionOperator space* filename:argument
 
 redirectionOperator
- = '<' / '>' / '>|' / '&>' / '>>' / '&>>'
+ = '>|' / '>>' / '&>>' / '&>' / '<' / '>'
 
 fd
  = digits:[0-9]+ { return parseInt(join(digits), 10) }
+
+pipe =
+ "|" spaceNL* command:command
 
 space
  = " " / "\t"
