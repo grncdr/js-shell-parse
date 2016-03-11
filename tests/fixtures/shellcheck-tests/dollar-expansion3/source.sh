@@ -1,0 +1,3 @@
+echo $( command 
+#comment 
+)

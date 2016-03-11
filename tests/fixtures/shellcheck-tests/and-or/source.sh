@@ -1,0 +1,1 @@
+grep -i lol foo || exit 1

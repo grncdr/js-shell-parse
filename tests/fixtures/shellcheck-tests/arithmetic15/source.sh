@@ -1,0 +1,1 @@
+((foo[`echo foo | sed s/foo/4/g` * 3] + 4))

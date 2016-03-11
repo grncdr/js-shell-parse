@@ -1,0 +1,1 @@
+foo   (){ command foo --lol "$@"; }

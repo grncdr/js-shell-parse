@@ -1,0 +1,1 @@
+if false; then true; else; echo lol; fi
