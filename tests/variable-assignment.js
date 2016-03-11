@@ -26,3 +26,14 @@ test('Variable assignments before command', function (t) {
   }]);
   t.end();
 });
+
+test('Empty variable assignments', function (t) {
+  t.deepEqual(parse('a='), [{
+    type: 'variableAssignment',
+    name: 'a',
+    value: null,
+    control: ';',
+    next: null
+  }]);
+  t.end();
+});

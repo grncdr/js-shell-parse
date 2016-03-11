@@ -46,7 +46,7 @@ condition
  = test:script
 
 variableAssignment
- = name:writableVariableName '=' value:argument
+ = name:writableVariableName '=' value:argument?
 
 commandName "command name"
  = !redirect

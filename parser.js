@@ -1380,6 +1380,9 @@ var parser=(function() {
         }
         if (s2 !== peg$FAILED) {
           s3 = peg$parseargument();
+          if (s3 === peg$FAILED) {
+            s3 = peg$c4;
+          }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
             s1 = peg$c45(s1, s3);
