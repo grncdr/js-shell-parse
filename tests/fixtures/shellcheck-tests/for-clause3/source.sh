@@ -1,0 +1,1 @@
+for f; do foo; done

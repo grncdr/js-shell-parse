@@ -1,0 +1,1 @@
+typeset -a foo=(lol)

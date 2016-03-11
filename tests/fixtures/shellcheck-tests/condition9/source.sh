@@ -1,0 +1,1 @@
+[ foo -a -f bar ]
