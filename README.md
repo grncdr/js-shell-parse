@@ -5,7 +5,8 @@ Parse bash scripts into AST's
 ## Synopsis
 
 ```ocaml
-module.exports := (String) => Object
+var parse = require('shell-parse')
+parse('echo $PATH') //=> an ugly AST object
 ```
 
 _(better synopsis will come after real tests)_
@@ -15,6 +16,10 @@ _(better synopsis will come after real tests)_
 This thing parses strings containing bash scripts into an AST that you might
 execute using an interpreter or something. The AST structure is still in flux,
 so you probably don't want to build on this just yet!
+
+If you want to help, there's a whole bunch of failing test fixtures (borrowed from the lovely https://github.com/koalaman/shellcheck project). You can start with reading the [grammar](grammar.pegjs). The grammar defines how text will be matched, while the corresponding rule callbacks in [overrides.js](overrides.js) defines the way those matches will be processed into AST nodes. Be sure to read the comments as there's a tiny bit of magic going on.
+
+If you get stuck trying to fix a test case, **email me**. GitHub issue notifications almost never get my attention.
 
 ## Examples
 
