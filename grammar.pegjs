@@ -62,7 +62,7 @@ argument "command argument"
  = commandName
  / processSubstitution
 
-concatenation
+concatenation "concatenation of strings and/or variables"
  = pieces:( glob
           / bareword
           / environmentVariable
@@ -72,8 +72,8 @@ concatenation
           / doubleQuote
           )+
 
-bareword
- = cs:barewordChar+
+bareword "bareword"
+ = !'#' cs:barewordChar+
 
 barewordChar
  = '\\' chr:barewordMeta { return chr }
@@ -157,8 +157,9 @@ pipe =
 space
  = " " / "\t"
 
-spaceNL
- = space / "\n"
+spaceNL = space / "\n" / comment
+
+comment = '#' [^\n]* ("\n" / EOF)
 
 keyword
  = ( "while"
