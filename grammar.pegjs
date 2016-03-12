@@ -7,7 +7,8 @@ statementList "a list of statements"
    last:(space* controlOperator)?
 
 statement
- = statement:( command
+ = statement:( subshell
+             / command
              / variableAssignment
              / conditionalLoop
              / ifBlock
@@ -44,6 +45,9 @@ elifBlock
 
 condition
  = test:script
+
+subshell "a subshell"
+ = "(" space* statements:statementList  space* ")"
 
 variableAssignment
  = name:writableVariableName '=' value:argument?

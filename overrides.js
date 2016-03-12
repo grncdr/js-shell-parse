@@ -95,6 +95,14 @@ rules.statementList = function (first, rest, last) {
   }
 }
 
+rules.subshell = function (statements) {
+  debugger
+  return {
+    type: 'subshell',
+    statements: statements,
+  }
+}
+
 rules.conditionalLoop = function (kind, test, body) {
   return {
     type: kind + '-loop',
