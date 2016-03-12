@@ -1,25 +1,27 @@
 script
- = sections:(spaceNL* statementList spaceNL*)+
+ = spaceNL* statements:statementList?
 
-statementList "a list of statements"
- = first:statement
-   rest:(space* controlOperator spaceNL* statement)*
-   last:(space* controlOperator)?
+statementList
+ = head:statement
+   tail:(controlOperator spaceNL* statement)*
+   space* last:controlOperator? spaceNL*
 
 statement
  = statement:( subshell
+             / bashExtensions
              / command
              / variableAssignment
-             / conditionalLoop
              / ifBlock
+             / conditionalLoop
+             / forLoop
              )
    next:(space* chainedStatement)?
 
 chainedStatement
  = operator:('&&' / '||') spaceNL* statement:statement
 
-controlOperator
- = op:('&' / ';' / '\n')
+subshell "a subshell"
+ = "(" space* statements:statementList  space* ")"
 
 command "a single command"
  = pre:((variableAssignment / redirect) space+)*
@@ -27,14 +29,11 @@ command "a single command"
    post:(space+ (redirect / argument))*
    pipe:(space* pipe)?
 
-conditionalLoop
- = kind:("while" / "until") spaceNL+ test:condition spaceNL*
-   "do" spaceNL
-   body:script
-   "done"
+condition
+ = test:script
 
-ifBlock
- = "if" spaceNL+ test:script
+ifBlock "an if/elif/else statement"
+ = "if" spaceNL+ test:condition
    "then" spaceNL+ body:script
    elifBlocks:elifBlock*
    elseBody:("else" script)?
@@ -43,13 +42,29 @@ ifBlock
 elifBlock
  = "elif" spaceNL+ test:condition "then" spaceNL+ body:script
 
-condition
- = test:script
+conditionalLoop "a while/until loop"
+ = kind:("while" / "until") spaceNL+ test:condition
+   "do" spaceNL+ body:script
+   "done"
 
-subshell "a subshell"
- = "(" space* statements:statementList  space* ")"
+forLoop "a for loop"
+ = "for" space+ loopVar:writableVariableName spaceNL+
+   subjects:("in" (space+ argument)*)?
+   space* (";" / "\n") spaceNL*
+   "do" spaceNL+
+   body:statementList spaceNL*
+   "done"
 
-variableAssignment
+bashExtensions
+ = time / declare
+
+time "time builtin"
+ = "time" space+ flags:("-" [a-z]+ space+)* statements:statementList
+
+declare "declare builtin"
+ = ("declare" / "typeset") command:[^\n]+ (";" / "\n")
+
+variableAssignment "a variable assignment"
  = name:writableVariableName '=' value:argument?
 
 commandName "command name"
@@ -59,8 +74,7 @@ commandName "command name"
    name:(concatenation / builtinCommandName)
 
 builtinCommandName
- = '['
- / '[['
+ = '[[' / '['
 
 argument "command argument"
  = commandName
@@ -155,15 +169,19 @@ redirectionOperator
 fd
  = digits:[0-9]+ { return parseInt(join(digits), 10) }
 
+controlOperator
+ = space* op:('&' / ';' / '\n')
+
 pipe =
  "|" spaceNL* command:command
 
-space
+space "whitespace"
  = " " / "\t"
 
 spaceNL = space / "\n" / comment
 
-comment = '#' [^\n]* ("\n" / EOF)
+comment "a comment"
+  = '#' [^\n]* ("\n" / EOF)
 
 keyword
  = ( "while"

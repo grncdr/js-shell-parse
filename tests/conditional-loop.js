@@ -7,7 +7,7 @@ test('conditional loop', function (t) {
   var statement = parse('while true; do echo 1; done')[0]
 
   t.deepEqual(statement, {
-    type: "while-loop",
+    type: "whileLoop",
     test: [{
       type: "command",
       command: {

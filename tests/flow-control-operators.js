@@ -1,7 +1,7 @@
 var test = require('tape')
 var parse = require('../parser')
 
-test('command sequencing', function (t) {
+test('flow control operators', function (t) {
   var expect = [
     {
       type: 'command',
@@ -27,7 +27,6 @@ test('command sequencing', function (t) {
     },
   ];
 
-  debugger
   t.deepEqual(parse('echo ok;echo ok2;'), expect,
               'can separate commands with ";"')
 

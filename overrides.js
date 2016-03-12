@@ -70,21 +70,23 @@ exports.initializer = [
   }
 ].join('\n')
 
-rules.script = function (sections) {
-  var statements = []
-  map(sections, function (section) {
-    statements = statements.concat(section[1])
-  })
-  return statements
+rules.script = function (statements) {
+  return statements || []
 }
 
-rules.statementList = function (first, rest, last) {
-  var statements = [first]
-  var prev = first
-  map(rest, function (spaceOpSpaceCmd, i, cmds) {
-    setOperator(spaceOpSpaceCmd[1], prev)
-    statements.push(prev = spaceOpSpaceCmd[3])
+rules.statementList = function (first, tail, last) {
+  var statements = [head]
+  var prev = head
+  map(tail, function (spaceOpSpaceCmd, i, cmds) {
+    setOperator(spaceOpSpaceCmd[0], prev)
+    statements.push(prev = spaceOpSpaceCmd[2])
   })
+
+  if (last) {
+    if (!prev) { debugger }
+    setOperator(last, prev)
+  }
+
   return statements
 
   function setOperator(operator, command) {
@@ -96,7 +98,6 @@ rules.statementList = function (first, rest, last) {
 }
 
 rules.subshell = function (statements) {
-  debugger
   return {
     type: 'subshell',
     statements: statements,
@@ -105,8 +106,17 @@ rules.subshell = function (statements) {
 
 rules.conditionalLoop = function (kind, test, body) {
   return {
-    type: kind + '-loop',
+    type: kind + 'Loop',
     test: test,
+    body: body
+  }
+}
+
+rules.forLoop = function (loopVar, subjects, body) {
+  return {
+    type: 'forLoop',
+    loopVariable: loopVar,
+    subjects: subjects[1].map(second),
     body: body
   }
 }
@@ -126,6 +136,14 @@ rules.elifBlock = function (test, body) {
     type: 'ifElse',
     test: test,
     body: body
+  }
+}
+
+rules.time = function (flags, statements) {
+  return {
+    type: 'time',
+    flags: flags,
+    command: statements
   }
 }
 
@@ -199,15 +217,6 @@ rules.processSubstitution = function (rw)  {
 
 rules.environmentVariable  = function () {
   return {type: 'variable', name: name}
-}
-
-rules.variableAssignment = function () {
-  name, val
-  return {
-    type: 'assignment',
-    name: name,
-    value: val
-  }
 }
 
 rules.variableSubstitution = function () {

@@ -1,7 +1,7 @@
 var test = require('tape');
 var parse = require('../parser');
 
-test('Standalone variable assignments', function (t) {
+test('Variable assignments', function (t) {
   t.deepEqual(parse('a="b"'), [{
     type: 'variableAssignment',
     name: 'a',
