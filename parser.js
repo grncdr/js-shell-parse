@@ -1,14 +1,16 @@
-module.exports = function parse(input, opts) {
-    // Wrap parser.parse to allow specifying the start rule
-    // as a shorthand option
-    if (!opts) {
-      opts = {}
-    }
-    else if (typeof opts == 'string') {
-      opts = { startRule: opts }
-    }
-    return parser.parse(input, opts)
+module.exports = parse
+
+function parse(input, opts) {
+  // Wrap parser.parse to allow specifying the start rule
+  // as a shorthand option
+  if (!opts) {
+    opts = {}
   }
+  else if (typeof opts == 'string') {
+    opts = { startRule: opts }
+  }
+  return parser.parse(input, opts)
+}
 var parser=(function() {
   "use strict";
 

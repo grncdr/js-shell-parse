@@ -31,7 +31,12 @@ test('shellcheck fixtures', function(t) {
         parse(source)
         t.pass(dir + ': parsed sucessfully')
       } catch (e) {
-        t.fail(dir + ': ' + (e.stack || e.message || e))
+        if (e instanceof parse.SyntaxError) {
+          t.fail('parse failed')
+          formatParseError(dir, source, e)
+        } else {
+          throw e
+        }
       }
     }
 
@@ -39,3 +44,12 @@ test('shellcheck fixtures', function(t) {
   t.end()
 
 })
+
+function formatParseError (dir, source, err) {
+  var msg = dir + ': ' + err.message
+  var start = Math.max(0, err.offset - 8)
+  msg += '\n  ' + source.slice(start, start + 10).trim() + '\n'
+  for (var i = 0; i <= (err.column - start); i++) msg += '-';
+  msg += '^'
+  console.error(msg)
+}

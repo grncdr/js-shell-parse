@@ -28,21 +28,11 @@ function getSource () {
     plugins: [overrideAction],
     overrideActionPlugin: require('./overrides')
   })
-  return 'module.exports = ' + parse + '\n' +
+  return 'module.exports = parse\n\n' +
+         parse + '\n' +
          'var parser=' + parserSource + '\n' +
          'module.exports.SyntaxError = parser.SyntaxError\n';
 
-  function parse (input, opts) {
-    // Wrap parser.parse to allow specifying the start rule
-    // as a shorthand option
-    if (!opts) {
-      opts = {}
-    }
-    else if (typeof opts == 'string') {
-      opts = { startRule: opts }
-    }
-    return parser.parse(input, opts)
-  }
 }
 
 function watch () {
@@ -62,3 +52,17 @@ function watch () {
   }
 }
 
+/**
+ * This isn't called directly, but stringified into the resulting source
+ */
+function parse (input, opts) {
+  // Wrap parser.parse to allow specifying the start rule
+  // as a shorthand option
+  if (!opts) {
+    opts = {}
+  }
+  else if (typeof opts == 'string') {
+    opts = { startRule: opts }
+  }
+  return parser.parse(input, opts)
+}
