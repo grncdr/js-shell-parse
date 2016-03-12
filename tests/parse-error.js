@@ -15,9 +15,9 @@ test('expected errors', function (t) {
       } catch (err) {
       
         t.equal(err.constructor, parse.SyntaxError, 'threw expected SyntaxError')
-        t.equal(example.position, err.offset, 'SyntaxError has expected offset')
+        t.equal(example.position, err.location.start.offset, 'SyntaxError has expected offset')
         try {
-          var result = parse(example.input.substr(err.offset), 'continuationStart')
+          var result = parse(example.input.substr(err.location.start.offset), 'continuationStart')
           t.fail('Open paren was parsed as a continuationStart, this is wrong')
           console.log(result)
         } catch (e) {

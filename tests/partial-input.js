@@ -21,7 +21,7 @@ test('partial input', function (t) {
     } catch (errTop) {
       t.equal(errTop.constructor, parse.SyntaxError, 'got a SyntaxError')
       try {
-        var cont = input.slice(errTop.offset)
+        var cont = input.slice(errTop.location.start.offset)
         parse(cont, 'continuationStart')
         t.pass(JSON.stringify(cont) + ' is a continuationStart')
       } catch (errCont) {

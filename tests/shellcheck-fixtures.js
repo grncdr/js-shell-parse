@@ -59,7 +59,7 @@ test('shellcheck fixtures', function(t) {
 
 function formatParseError (dir, source, err) {
   var msg = dir.replace(fixturesDir + '/', '') + ': ' + err.message
-  var start = Math.max(0, err.offset - 8)
+  var start = Math.max(0, err.location.start.offset - 8)
   msg += '\n  ' + source.slice(start, start + 10).trim() + '\n'
   for (var i = 0; i <= (err.column - start); i++) msg += '-';
   msg += '^'
