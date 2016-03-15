@@ -8,6 +8,7 @@ statementList
 
 statement
  = statement:( subshell
+             / arithmeticStatement
              / bashExtensions
              / command
              / variableAssignment
@@ -22,6 +23,9 @@ chainedStatement
 
 subshell "a subshell"
  = "(" space* statements:statementList  space* ")"
+
+arithmeticStatement "an arithmetic statement"
+ = "((" expression:arithmetic "))"
 
 command "a single command"
  = pre:((variableAssignment / redirect) space+)*
@@ -140,6 +144,9 @@ commandSubstitution
 parenCommandSubstitution
  = '$(' commands:statementList ')'
 
+arithmeticSubstitution
+ = '$((' expression:arithmetic '))'
+
 backQuote
  = '`' input:backQuoteChar+ '`'
 
@@ -199,6 +206,9 @@ keyword
    / "[["
    )
    ( spaceNL+ / EOF )
+
+arithmetic
+ = commandName
 
 continuationStart
  = &( keyword / '"' / "'" / '`' / "$(" / "${" ) .*
