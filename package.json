@@ -35,10 +35,10 @@
     }
   },
   "devDependencies": {
+    "markdown-code-blocks": "0.0.1",
     "pegjs": "~0.9.0",
     "pegjs-override-action": "0.2.3",
     "tape": "^4.5.1",
-    "markdown-code-blocks": "0.0.1",
     "xtend": "~2.1.1"
   },
   "repository": {

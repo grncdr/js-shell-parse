@@ -97,6 +97,13 @@ rules.statementList = function (first, tail, last) {
   }
 }
 
+rules.arithmeticStatement = function (expression) {
+  return {
+    type: 'arithmeticStatement',
+    expression: expression,
+  }
+}
+
 rules.subshell = function (statements) {
   return {
     type: 'subshell',

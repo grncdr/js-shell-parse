@@ -24,6 +24,7 @@ test('shellcheck fixtures', function(t) {
 
   t.plan(fixtureDirs.length)
   fixtureDirs.forEach(function (fixtureDir) {
+    var fixtureName = fixtureDir.replace(fixturesDir + '/', '')
     var source = fs.readFileSync(path.join(fixtureDir, 'source.sh'), 'utf8')
 
     var error, ast;
@@ -37,15 +38,19 @@ test('shellcheck fixtures', function(t) {
         parse(source)
       }, error.message ? new RegExp(error.message) : undefined, fixtureDir + ' errored')
     } else if (ast) {
-      t.deepEqual(parse(source), ast, dir)
+      t.deepEqual(parse(source), ast, fixtureName)
     } else {
       try {
-        parse(source)
-        t.pass(fixtureDir.replace(fixturesDir + '/', '') + ': parsed sucessfully')
+        ast = parse(source)
+        if (process.env.write_shellcheck_fixture_ast) {
+          fs.writeFileSync(path.join(fixtureDir, 'ast.json'), JSON.stringify(ast, null, '  ') + '\n', 'utf8')
+        }
+        t.pass(fixtureName + ': parsed sucessfully')
       } catch (e) {
         if (e instanceof parse.SyntaxError) {
-          t.fail('parse failed')
-          formatParseError(fixtureDir, source, e)
+          var formattedErr = formatParseError(fixtureDir, source, e)
+          t.fail('parse failed: ' + formattedErr)
+          console.error(formattedErr + '\n' + e.stack)
         } else {
           throw e
         }
@@ -63,5 +68,5 @@ function formatParseError (dir, source, err) {
   msg += '\n  ' + source.slice(start, start + 10).trim() + '\n'
   for (var i = 0; i <= (err.column - start); i++) msg += '-';
   msg += '^'
-  console.error(msg)
+  return msg
 }

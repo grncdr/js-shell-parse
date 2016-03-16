@@ -7,8 +7,8 @@ statementList
    space* last:controlOperator? spaceNL*
 
 statement
- = statement:( subshell
-             / arithmeticStatement
+ = statement:(arithmeticStatement
+             / subshell
              / bashExtensions
              / command
              / variableAssignment
@@ -21,11 +21,11 @@ statement
 chainedStatement
  = operator:('&&' / '||') spaceNL* statement:statement
 
+arithmeticStatement "an arithmetic statement"
+ = "((" space* expression:arithmetic space* "))"
+
 subshell "a subshell"
  = "(" space* statements:statementList  space* ")"
-
-arithmeticStatement "an arithmetic statement"
- = "((" expression:arithmetic "))"
 
 command "a single command"
  = pre:((variableAssignment / redirect) space+)*
@@ -207,8 +207,81 @@ keyword
    )
    ( spaceNL+ / EOF )
 
-arithmetic
- = commandName
+// http://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html
+arithmetic "an arithmetic expression"
+ = aComma
+
+aComma "a sequence of arithmetic expressions"
+ = head:aAssign tail:( space* "," space* aComma )*
+
+aAssign "an arithmetic assignment"
+ = writableVariableName space* ( "=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) space* aAssign
+ / aCond
+
+aCond "an arithmetic conditional expression"
+ = aLogicalOr space* "?" space* aCond space* ":" space* aCond
+ / aLogicalOr
+
+aLogicalOr "an arithmetic logical or"
+ = aLogicalAnd space* "||" space* aLogicalOr
+ / aLogicalAnd
+
+aLogicalAnd "an arithmetic logical and"
+ = aBitwiseOr space* "&&" space* aLogicalAnd
+ / aBitwiseOr
+
+aBitwiseOr
+ = aBitwiseXor space* "|" space* aBitwiseOr
+ / aBitwiseXor
+
+aBitwiseXor
+ = aBitwiseAnd space* "^" space* aBitwiseXor
+ / aBitwiseAnd
+
+aBitwiseAnd
+ = aEquality space* "&" space* aBitwiseAnd
+ / aEquality
+
+aEquality
+ = aComparison space* ( "==" / "!=" ) space* aEquality
+ / aComparison
+
+aComparison
+ = aBitwiseShift space* ( "<=" / ">=" / "<" / ">" ) space* aComparison
+ / aBitwiseShift
+
+aBitwiseShift
+ = aAddSubtract space* ( "<<" / ">>" ) space* aBitwiseShift
+ / aAddSubtract
+
+aAddSubtract
+ = aMultDivModulo space* ( "+" / "-" ) space* aAddSubtract
+ / aMultDivModulo
+
+aMultDivModulo
+ = aExponent space* ( "*" / "/" ) space* aMultDivModulo
+ / aExponent
+
+aExponent
+ = aNegation space* "**" space* aExponent
+ / aNegation
+
+aNegation
+ = ( "!" / "~" ) space* aNegation
+ / aUnary
+
+aUnary
+ = ( "+" / "-" ) space* aUnary
+ / aPreIncDec
+
+aPreIncDec
+ = ( "++" / "--" ) space* aPreIncDec
+ / aPostIncDec
+
+aPostIncDec
+ // = aPostIncDec space* ( "++" / "--" ) // TODO: figure out how to do this
+ = writableVariableName space* ( "++" / "--" ) // TODO: figure out how to do this
+ / writableVariableName
 
 continuationStart
  = &( keyword / '"' / "'" / '`' / "$(" / "${" ) .*
