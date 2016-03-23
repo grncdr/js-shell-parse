@@ -316,9 +316,26 @@ rules.arithmetic = function (expression) {
   return expression
 }
 
-rules.aVariable  = function () {
+function aVariable (name) {
   return {type: 'arithmeticVariable', name: name}
 }
+
+rules.aVariable = [aVariable, aVariable, other]
+
+rules.aNumber = [
+  function (digits) {
+    return {type: 'number', value: parseInt(digits, 16)}
+  },
+  function (base, digits) {
+    return {type: 'number', value: parseInt(digits, parseInt(base, 10))}
+  },
+  function (digits) {
+    return {type: 'number', value: parseInt(digits, 8)}
+  },
+  function (digits) {
+    return {type: 'number', value: parseInt(digits, 10)}
+  }
+]
 
 rules.aComma = function (head, tail) {
   if (tail.length) {

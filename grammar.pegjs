@@ -285,6 +285,14 @@ aPostIncDec
 
 aVariable
  = name:writableVariableName
+ / "$" name:("?")  /* todo, other special vars */
+ / other:aNumber
+
+aNumber
+ = "0" [xX] digits:[0-9a-fA-Z]+
+ / base:[0-9]+ "#" digits:[0-9a-zA-Z]+
+ / "0" digits:[0-7]+
+ / digits:[0-9]+
 
 continuationStart
  = &( keyword / '"' / "'" / '`' / "$(" / "${" ) .*
