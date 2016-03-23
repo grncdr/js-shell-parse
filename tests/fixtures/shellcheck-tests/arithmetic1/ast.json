@@ -1,0 +1,29 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticBinary",
+      "operator": "+",
+      "left": {
+        "type": "arithmeticUpdate",
+        "operator": "++",
+        "argument": {
+          "type": "arithmeticVariable",
+          "name": "n"
+        },
+        "prefix": false
+      },
+      "right": {
+        "type": "arithmeticUpdate",
+        "operator": "+",
+        "argument": {
+          "type": "arithmeticVariable",
+          "name": "c"
+        },
+        "prefix": true
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]

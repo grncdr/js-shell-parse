@@ -397,7 +397,7 @@ rules.aExponent =
   }
 }, other]
 
-rules.aNegation = rules.aNegation =
+rules.aNegation = rules.aUnary =
 [
   function (operator, argument) {
     return {
