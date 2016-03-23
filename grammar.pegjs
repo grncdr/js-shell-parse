@@ -271,7 +271,7 @@ aNegation
  / other:aUnary
 
 aUnary
- = operator:( "+" / "-" ) space* argument:aUnary
+ = operator:( "+" !"+" / "-" !"-" ) space* argument:aUnary
  / other:aPreIncDec
 
 aPreIncDec

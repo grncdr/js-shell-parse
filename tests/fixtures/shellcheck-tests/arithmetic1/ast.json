@@ -15,7 +15,7 @@
       },
       "right": {
         "type": "arithmeticUpdate",
-        "operator": "+",
+        "operator": "++",
         "argument": {
           "type": "arithmeticVariable",
           "name": "c"
