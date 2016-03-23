@@ -1,0 +1,22 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticConditional",
+      "test": {
+        "type": "arithmeticVariable",
+        "name": "a"
+      },
+      "consequent": {
+        "type": "arithmeticVariable",
+        "name": "b"
+      },
+      "alternate": {
+        "type": "arithmeticVariable",
+        "name": "c"
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]

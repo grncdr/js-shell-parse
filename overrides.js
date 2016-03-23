@@ -311,3 +311,121 @@ rules.redirectFd = function (fd, op, filename) {
     filename: filename
   }
 }
+
+rules.arithmetic = function (expression) {
+  return expression
+}
+
+rules.aVariable  = function () {
+  return {type: 'arithmeticVariable', name: name}
+}
+
+rules.aComma = function (head, tail) {
+  if (tail.length) {
+    return {
+      type: 'arithmeticSequence',
+      expressions: [head].concat(tail)
+    }
+  }
+  return head
+}
+
+function other(other) { return other }
+
+rules.aCond = [
+  function (test, consequent, alternate) {
+    return {
+      type: 'arithmeticConditional',
+      test: test,
+      consequent: consequent,
+      alternate: alternate
+    }
+  }, other
+]
+
+rules.aAssign = [
+  function (left, operator, right) {
+    return {
+      type: 'arithmeticAssignment',
+      left: left,
+      operator: operator,
+      right: right
+    }
+  }, other
+]
+
+rules.aLogicalOr = [
+  function (left, right) {
+    return {
+      type: 'arithmeticLogical',
+      operator: '||',
+      left: left,
+      right: right
+    }
+  }, other
+]
+
+rules.aLogicalAnd = [
+  function (left, right) {
+    return {
+      type: 'arithmeticLogical',
+      operator: '&&',
+      left: left,
+      right: right
+    }
+  }, other
+]
+
+rules.aBitwiseOr =
+rules.aLogicalAnd =
+rules.aBitwiseOr =
+rules.aBitwiseXor =
+rules.aBitwiseAnd =
+rules.aEquality =
+rules.aComparison =
+rules.aBitwiseShift =
+rules.aAddSubtract =
+rules.aMultDivModulo =
+rules.aExponent =
+[
+  function arithmeticBinary(left, operator, right) {
+  return {
+    type: 'arithmeticBinary',
+    operator: operator,
+    left: left,
+    right: right
+  }
+}, other]
+
+rules.aNegation = rules.aNegation =
+[
+  function (operator, argument) {
+    return {
+      type: 'arithmeticUnary',
+      operator: operator,
+      argument: argument
+    }
+  }, other
+]
+
+rules.aPreIncDec = [
+  function (operator, argument) {
+    return {
+      type: 'arithmeticUpdate',
+      operator: operator,
+      argument: argument,
+      prefix: true
+    }
+  }, other
+]
+
+rules.aPostIncDec = [
+  function (argument) {
+    return {
+      type: 'arithmeticUpdate',
+      operator: operator,
+      argument: argument,
+      prefix: false
+    }
+  }, other
+]

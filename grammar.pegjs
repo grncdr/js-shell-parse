@@ -209,79 +209,82 @@ keyword
 
 // http://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html
 arithmetic "an arithmetic expression"
- = aComma
+ = expression:aComma
 
 aComma "a sequence of arithmetic expressions"
  = head:aAssign tail:( space* "," space* aComma )*
 
 aAssign "an arithmetic assignment"
- = writableVariableName space* ( "=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) space* aAssign
- / aCond
+ = left:aVariable space* operator:( "=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) space* right:aAssign
+ / other:aCond
 
 aCond "an arithmetic conditional expression"
- = aLogicalOr space* "?" space* aCond space* ":" space* aCond
- / aLogicalOr
+ = test:aLogicalOr space* "?" space* consequent:aCond space* ":" space* alternate:aCond
+ / other:aLogicalOr
 
 aLogicalOr "an arithmetic logical or"
- = aLogicalAnd space* "||" space* aLogicalOr
- / aLogicalAnd
+ = left:aLogicalAnd space* "||" space* right:aLogicalOr
+ / other:aLogicalAnd
 
 aLogicalAnd "an arithmetic logical and"
- = aBitwiseOr space* "&&" space* aLogicalAnd
- / aBitwiseOr
+ = left:aBitwiseOr space* "&&" space* right:aLogicalAnd
+ / other:aBitwiseOr
 
 aBitwiseOr
- = aBitwiseXor space* "|" space* aBitwiseOr
- / aBitwiseXor
+ = left:aBitwiseXor space* operator:"|" space* right:aBitwiseOr
+ / other:aBitwiseXor
 
 aBitwiseXor
- = aBitwiseAnd space* "^" space* aBitwiseXor
- / aBitwiseAnd
+ = left:aBitwiseAnd space* operator:"^" space* right:aBitwiseXor
+ / other:aBitwiseAnd
 
 aBitwiseAnd
- = aEquality space* "&" space* aBitwiseAnd
- / aEquality
+ = left:aEquality space* operator:"&" space* right:aBitwiseAnd
+ / other:aEquality
 
 aEquality
- = aComparison space* ( "==" / "!=" ) space* aEquality
- / aComparison
+ = left:aComparison space* operator:( "==" / "!=" ) space* right:aEquality
+ / other:aComparison
 
 aComparison
- = aBitwiseShift space* ( "<=" / ">=" / "<" / ">" ) space* aComparison
- / aBitwiseShift
+ = left:aBitwiseShift space* operator:( "<=" / ">=" / "<" / ">" ) space* right:aComparison
+ / other:aBitwiseShift
 
 aBitwiseShift
- = aAddSubtract space* ( "<<" / ">>" ) space* aBitwiseShift
- / aAddSubtract
+ = left:aAddSubtract space* operator:( "<<" / ">>" ) space* right:aBitwiseShift
+ / other:aAddSubtract
 
 aAddSubtract
- = aMultDivModulo space* ( "+" / "-" ) space* aAddSubtract
- / aMultDivModulo
+ = left:aMultDivModulo space* operator:( "+" / "-" ) space* right:aAddSubtract
+ / other:aMultDivModulo
 
 aMultDivModulo
- = aExponent space* ( "*" / "/" ) space* aMultDivModulo
- / aExponent
+ = left:aExponent space* operator:( "*" / "/" ) space* right:aMultDivModulo
+ / other:aExponent
 
 aExponent
- = aNegation space* "**" space* aExponent
- / aNegation
+ = left:aNegation space* operator:"**" space* right:aExponent
+ / other:aNegation
 
 aNegation
- = ( "!" / "~" ) space* aNegation
- / aUnary
+ = operator:( "!" / "~" ) space* argument:aNegation
+ / other:aUnary
 
 aUnary
- = ( "+" / "-" ) space* aUnary
- / aPreIncDec
+ = operator:( "+" / "-" ) space* argument:aUnary
+ / other:aPreIncDec
 
 aPreIncDec
- = ( "++" / "--" ) space* aPreIncDec
- / aPostIncDec
+ = operator:( "++" / "--" ) space* argument:aPreIncDec
+ / other:aPostIncDec
 
 aPostIncDec
- // = aPostIncDec space* ( "++" / "--" ) // TODO: figure out how to do this
- = writableVariableName space* ( "++" / "--" ) // TODO: figure out how to do this
- / writableVariableName
+ // = argument:aPostIncDec space* operator:( "++" / "--" ) // TODO: figure out how to do this
+ = argument:aVariable space* operator:( "++" / "--" ) // TODO: figure out how to do this
+ / other:aVariable
+
+aVariable
+ = name:writableVariableName
 
 continuationStart
  = &( keyword / '"' / "'" / '`' / "$(" / "${" ) .*
