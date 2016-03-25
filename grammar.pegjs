@@ -215,7 +215,7 @@ aComma "a sequence of arithmetic expressions"
  = head:aAssign tail:( space* "," space* aComma )*
 
 aAssign "an arithmetic assignment"
- = left:aVariable space* operator:( "=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) space* right:aAssign
+ = left:aLiteral space* operator:( "=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) space* right:aAssign
  / other:aCond
 
 aCond "an arithmetic conditional expression"
@@ -280,13 +280,16 @@ aPreIncDec
 
 aPostIncDec
  // = argument:aPostIncDec space* operator:( "++" / "--" ) // TODO: figure out how to do this
- = argument:aVariable space* operator:( "++" / "--" ) // TODO: figure out how to do this
- / other:aVariable
+ = argument:aLiteral space* operator:( "++" / "--" ) // TODO: figure out how to do this
+ / other:aLiteral
 
 aVariable
  = name:writableVariableName
- / "$" name:("?")  /* todo, other special vars */
- / other:aNumber
+ / "$" name:"?" /* todo, other special vars */
+
+aLiteral
+ = val:aNumber   { return val }
+ / val:aVariable { return val }
 
 aNumber
  = "0" [xX] digits:[0-9a-fA-Z]+

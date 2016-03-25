@@ -320,20 +320,20 @@ function aVariable (name) {
   return {type: 'arithmeticVariable', name: name}
 }
 
-rules.aVariable = [aVariable, aVariable, other]
+rules.aVariable = [aVariable, aVariable]
 
 rules.aNumber = [
   function (digits) {
-    return {type: 'number', value: parseInt(digits, 16)}
+    return {type: 'number', value: parseInt(digits.join(''), 16)}
   },
   function (base, digits) {
-    return {type: 'number', value: parseInt(digits, parseInt(base, 10))}
+    return {type: 'number', value: parseInt(digits.join(''), parseInt(base.join(''), 10))}
   },
   function (digits) {
-    return {type: 'number', value: parseInt(digits, 8)}
+    return {type: 'number', value: parseInt(digits.join(''), 8)}
   },
   function (digits) {
-    return {type: 'number', value: parseInt(digits, 10)}
+    return {type: 'number', value: parseInt(digits.join(''), 10)}
   }
 ]
 
