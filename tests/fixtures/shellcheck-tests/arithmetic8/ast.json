@@ -1,0 +1,11 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "number",
+      "value": 3
+    },
+    "control": ";",
+    "next": null
+  }
+]

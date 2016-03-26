@@ -1,0 +1,35 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticLogical",
+      "operator": "||",
+      "left": {
+        "type": "arithmeticBinary",
+        "operator": "|",
+        "left": {
+          "type": "number",
+          "value": 1
+        },
+        "right": {
+          "type": "number",
+          "value": 2
+        }
+      },
+      "right": {
+        "type": "arithmeticBinary",
+        "operator": "|",
+        "left": {
+          "type": "number",
+          "value": 3
+        },
+        "right": {
+          "type": "number",
+          "value": 4
+        }
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]
