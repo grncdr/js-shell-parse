@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "tape tests/*.js",
-    "watch": "npm run prepublish && node build.js -w",
+    "watch": "npm run prepublish && echo watching... && node build.js -w",
     "prepublish": "node build.js > parser.js"
   },
   "testling": {

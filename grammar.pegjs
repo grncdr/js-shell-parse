@@ -212,83 +212,92 @@ arithmetic "an arithmetic expression"
  = expression:aComma
 
 aComma "a sequence of arithmetic expressions"
- = head:aAssign tail:( space* "," space* aComma )*
+ = head:aAssign tail:( spaceNL* "," spaceNL* aComma )*
 
 aAssign "an arithmetic assignment"
- = left:aLiteral space* operator:( "=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) space* right:aAssign
+ = left:aCond spaceNL* operator:( "=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) spaceNL* right:aAssign
  / other:aCond
 
 aCond "an arithmetic conditional expression"
- = test:aLogicalOr space* "?" space* consequent:aCond space* ":" space* alternate:aCond
+ = test:aLogicalOr spaceNL* "?" spaceNL* consequent:aCond spaceNL* ":" spaceNL* alternate:aCond
  / other:aLogicalOr
 
 aLogicalOr "an arithmetic logical or"
- = left:aLogicalAnd space* "||" space* right:aLogicalOr
+ = left:aLogicalAnd spaceNL* "||" spaceNL* right:aLogicalOr
  / other:aLogicalAnd
 
 aLogicalAnd "an arithmetic logical and"
- = left:aBitwiseOr space* "&&" space* right:aLogicalAnd
+ = left:aBitwiseOr spaceNL* "&&" spaceNL* right:aLogicalAnd
  / other:aBitwiseOr
 
 aBitwiseOr
- = left:aBitwiseXor space* operator:"|" space* right:aBitwiseOr
+ = left:aBitwiseXor spaceNL* operator:"|" spaceNL* right:aBitwiseOr
  / other:aBitwiseXor
 
 aBitwiseXor
- = left:aBitwiseAnd space* operator:"^" space* right:aBitwiseXor
+ = left:aBitwiseAnd spaceNL* operator:"^" spaceNL* right:aBitwiseXor
  / other:aBitwiseAnd
 
 aBitwiseAnd
- = left:aEquality space* operator:"&" space* right:aBitwiseAnd
+ = left:aEquality spaceNL* operator:"&" spaceNL* right:aBitwiseAnd
  / other:aEquality
 
 aEquality
- = left:aComparison space* operator:( "==" / "!=" ) space* right:aEquality
+ = left:aComparison spaceNL* operator:( "==" / "!=" ) spaceNL* right:aEquality
  / other:aComparison
 
 aComparison
- = left:aBitwiseShift space* operator:( "<=" / ">=" / "<" / ">" ) space* right:aComparison
+ = left:aBitwiseShift spaceNL* operator:( "<=" / ">=" / "<" / ">" ) spaceNL* right:aComparison
  / other:aBitwiseShift
 
 aBitwiseShift
- = left:aAddSubtract space* operator:( "<<" / ">>" ) space* right:aBitwiseShift
+ = left:aAddSubtract spaceNL* operator:( "<<" / ">>" ) spaceNL* right:aBitwiseShift
  / other:aAddSubtract
 
 aAddSubtract
- = left:aMultDivModulo space* operator:( "+" / "-" ) space* right:aAddSubtract
+ = left:aMultDivModulo spaceNL* operator:( "+" / "-" ) spaceNL* right:aAddSubtract
  / other:aMultDivModulo
 
 aMultDivModulo
- = left:aExponent space* operator:( "*" / "/" ) space* right:aMultDivModulo
+ = left:aExponent spaceNL* operator:( "*" / "/" ) spaceNL* right:aMultDivModulo
  / other:aExponent
 
 aExponent
- = left:aNegation space* operator:"**" space* right:aExponent
+ = left:aNegation spaceNL* operator:"**" spaceNL* right:aExponent
  / other:aNegation
 
 aNegation
- = operator:( "!" / "~" ) space* argument:aNegation
+ = operator:( "!" / "~" ) spaceNL* argument:aNegation
  / other:aUnary
 
 aUnary
- = operator:( "+" !"+" / "-" !"-" ) space* argument:aUnary
+ = operator:( "+" !"+" / "-" !"-" ) spaceNL* argument:aUnary
  / other:aPreIncDec
 
 aPreIncDec
- = operator:( "++" / "--" ) space* argument:aPreIncDec
+ = operator:( "++" / "--" ) spaceNL* argument:aPreIncDec
  / other:aPostIncDec
 
 aPostIncDec
- // = argument:aPostIncDec space* operator:( "++" / "--" ) // TODO: figure out how to do this
- = argument:aLiteral space* operator:( "++" / "--" ) // TODO: figure out how to do this
- / other:aLiteral
+ // = argument:aPostIncDec spaceNL* operator:( "++" / "--" ) // TODO: figure out how to do this
+ = argument:aParenExpr spaceNL* operator:( "++" / "--" ) // TODO: figure out how to do this
+ / other:aParenExpr
+
+aParenExpr
+ = '(' spaceNL* value:arithmetic spaceNL* ')' { return value }
+ / other:aLiteral { return other }
 
 aVariable
  = name:writableVariableName
- / "$" name:"?" /* todo, other special vars */
+ / '$' name:readableVariableName
+
+aConcatenation
+ = singleQuote
+ / doubleQuote
 
 aLiteral
  = val:aNumber   { return val }
+ / val:aConcatenation { return val }
  / val:aVariable { return val }
 
 aNumber

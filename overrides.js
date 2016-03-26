@@ -394,8 +394,6 @@ rules.aLogicalAnd = [
 ]
 
 rules.aBitwiseOr =
-rules.aLogicalAnd =
-rules.aBitwiseOr =
 rules.aBitwiseXor =
 rules.aBitwiseAnd =
 rules.aEquality =

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var fs = require('fs')
 var pegjs = require('pegjs')
 var overrideAction = require('pegjs-override-action')

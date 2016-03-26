@@ -28,9 +28,9 @@ test('shellcheck fixtures', function(t) {
     var source = fs.readFileSync(path.join(fixtureDir, 'source.sh'), 'utf8')
 
     var error, ast;
-    try { error = require(path.join(fixtureDir, 'error.json')) } catch (e) {}
+    try { error = require(path.resolve(fixtureDir, 'error.json')) } catch (e) {}
     if (!error) {
-      try { ast = require(path.join(fixtureDir, 'ast.json')) } catch (e) {}
+      try { ast = require(path.resolve(fixtureDir, 'ast.json')) } catch (e) {}
     }
 
     if (error) {
