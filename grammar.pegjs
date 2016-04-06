@@ -279,8 +279,7 @@ aPreIncDec
  / other:aPostIncDec
 
 aPostIncDec
- // = argument:aPostIncDec spaceNL* operator:( "++" / "--" ) // TODO: figure out how to do this
- = argument:aParenExpr spaceNL* operator:( "++" / "--" ) // TODO: figure out how to do this
+ = argument:aParenExpr operators:(spaceNL* op:( "++" / "--" ) { return op })+
  / other:aParenExpr
 
 aParenExpr

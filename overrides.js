@@ -435,12 +435,17 @@ rules.aPreIncDec = [
 ]
 
 rules.aPostIncDec = [
-  function (argument) {
-    return {
-      type: 'arithmeticUpdate',
-      operator: operator,
-      argument: argument,
-      prefix: false
+  function (argument, operators) {
+    var node = argument;
+    // build the recursive structure from the list of suffix operators
+    for (var i = 0, l = operators.length; i < l; i++) {
+      node = {
+        type: 'arithmeticUpdate',
+        operator: operators[i],
+        argument: node,
+        prefix: false
+      }
     }
+    return node;
   }, other
 ]
