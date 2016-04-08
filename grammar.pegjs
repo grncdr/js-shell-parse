@@ -229,28 +229,28 @@ aLogicalAnd "an arithmetic logical and"
  = head:aBitwiseOr tail:(spaceNL* op:"&&" spaceNL* node:aBitwiseOr { return {op: op, node: node} })*
 
 aBitwiseOr
- = head:aBitwiseXor tail:(spaceNL* op:("|" ![|=]) spaceNL* node:aBitwiseXor { return {op: op, node: node} })*
+ = head:aBitwiseXor tail:(spaceNL* op:"|" ![|=] spaceNL* node:aBitwiseXor { return {op: op, node: node} })*
 
 aBitwiseXor
- = head:aBitwiseAnd tail:(spaceNL* op:"^" spaceNL* node:aBitwiseAnd { return {op: op, node: node} })*
+ = head:aBitwiseAnd tail:(spaceNL* op:"^" !"=" spaceNL* node:aBitwiseAnd { return {op: op, node: node} })*
 
 aBitwiseAnd
- = head:aEquality tail:(spaceNL* op:"&" spaceNL* node:aEquality { return {op: op, node: node} })*
+ = head:aEquality tail:(spaceNL* op:"&" ![&=] spaceNL* node:aEquality { return {op: op, node: node} })*
 
 aEquality
  = head:aComparison tail:(spaceNL* op:( "==" / "!=" ) spaceNL* node:aComparison { return {op: op, node: node} })*
 
 aComparison
- = head:aBitwiseShift tail:(spaceNL* op:( "<=" / ">=" / "<" / ">" ) spaceNL* node:aBitwiseShift { return {op: op, node: node} })*
+ = head:aBitwiseShift tail:(spaceNL* op:( "<=" / ">=" / (v:"<" !"<" { return v }) / (v:">" !">" { return v }) ) spaceNL* node:aBitwiseShift { return {op: op, node: node} })*
 
 aBitwiseShift
- = head:aAddSubtract tail:(spaceNL* op:( "<<" / ">>" ) spaceNL* node:aAddSubtract { return {op: op, node: node} })*
+ = head:aAddSubtract tail:(spaceNL* op:( "<<" / ">>" ) !"=" spaceNL* node:aAddSubtract { return {op: op, node: node} })*
 
 aAddSubtract
- = head:aMultDivModulo tail:(spaceNL* op:( "+" / "-" ) spaceNL* node:aMultDivModulo { return {op: op, node: node} })*
+ = head:aMultDivModulo tail:(spaceNL* op:( "+" / "-" ) !"=" spaceNL* node:aMultDivModulo { return {op: op, node: node} })*
 
 aMultDivModulo
- = head:aExponent tail:(spaceNL* op:( "*" / "/" ) spaceNL* node:aExponent { return {op: op, node: node} })*
+ = head:aExponent tail:(spaceNL* op:( (v:"*" !"*" { return v }) / "/" / "%") !"=" spaceNL* node:aExponent { return {op: op, node: node} })*
 
 aExponent
  = head:aNegation tail:(spaceNL* op:"**" spaceNL* node:aNegation { return {op: op, node: node} })*
@@ -260,7 +260,7 @@ aNegation
  / other:aUnary
 
 aUnary
- = operator:( (op:"+" !"+") { return op } / (op:"-" !"-") { return op } ) spaceNL* argument:aUnary
+ = operator:( (op:"+" ![+=]) { return op } / (op:"-" ![-=]) { return op } ) spaceNL* argument:aUnary
  / other:aPreIncDec
 
 aPreIncDec
