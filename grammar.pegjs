@@ -209,62 +209,51 @@ keyword
 
 // http://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html
 arithmetic "an arithmetic expression"
- = expression:aComma
+ = expression:aComma { return expression }
 
 aComma "a sequence of arithmetic expressions"
- = head:aAssign tail:( spaceNL* "," spaceNL* aComma )*
+ = head:aAssign tail:( spaceNL* "," spaceNL* aAssign )*
 
 aAssign "an arithmetic assignment"
- = left:aCond spaceNL* operator:( "=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) spaceNL* right:aAssign
+ = left:aCond spaceNL* operator:( "=" !"=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) spaceNL* right:aAssign
  / other:aCond
 
 aCond "an arithmetic conditional expression"
- = test:aLogicalOr spaceNL* "?" spaceNL* consequent:aCond spaceNL* ":" spaceNL* alternate:aCond
+ = test:aLogicalOr spaceNL* "?" spaceNL* consequent:aAssign spaceNL* ":" spaceNL* alternate:aAssign
  / other:aLogicalOr
 
 aLogicalOr "an arithmetic logical or"
- = left:aLogicalAnd spaceNL* "||" spaceNL* right:aLogicalOr
- / other:aLogicalAnd
+ = head:aLogicalAnd tail:(spaceNL* op:"||" spaceNL* node:aLogicalAnd { return {op: op, node: node} })*
 
 aLogicalAnd "an arithmetic logical and"
- = left:aBitwiseOr spaceNL* "&&" spaceNL* right:aLogicalAnd
- / other:aBitwiseOr
+ = head:aBitwiseOr tail:(spaceNL* op:"&&" spaceNL* node:aBitwiseOr { return {op: op, node: node} })*
 
 aBitwiseOr
- = left:aBitwiseXor spaceNL* operator:"|" spaceNL* right:aBitwiseOr
- / other:aBitwiseXor
+ = head:aBitwiseXor tail:(spaceNL* op:("|" ![|=]) spaceNL* node:aBitwiseXor { return {op: op, node: node} })*
 
 aBitwiseXor
- = left:aBitwiseAnd spaceNL* operator:"^" spaceNL* right:aBitwiseXor
- / other:aBitwiseAnd
+ = head:aBitwiseAnd tail:(spaceNL* op:"^" spaceNL* node:aBitwiseAnd { return {op: op, node: node} })*
 
 aBitwiseAnd
- = left:aEquality spaceNL* operator:"&" spaceNL* right:aBitwiseAnd
- / other:aEquality
+ = head:aEquality tail:(spaceNL* op:"&" spaceNL* node:aEquality { return {op: op, node: node} })*
 
 aEquality
- = left:aComparison spaceNL* operator:( "==" / "!=" ) spaceNL* right:aEquality
- / other:aComparison
+ = head:aComparison tail:(spaceNL* op:( "==" / "!=" ) spaceNL* node:aComparison { return {op: op, node: node} })*
 
 aComparison
- = left:aBitwiseShift spaceNL* operator:( "<=" / ">=" / "<" / ">" ) spaceNL* right:aComparison
- / other:aBitwiseShift
+ = head:aBitwiseShift tail:(spaceNL* op:( "<=" / ">=" / "<" / ">" ) spaceNL* node:aBitwiseShift { return {op: op, node: node} })*
 
 aBitwiseShift
- = left:aAddSubtract spaceNL* operator:( "<<" / ">>" ) spaceNL* right:aBitwiseShift
- / other:aAddSubtract
+ = head:aAddSubtract tail:(spaceNL* op:( "<<" / ">>" ) spaceNL* node:aAddSubtract { return {op: op, node: node} })*
 
 aAddSubtract
- = left:aMultDivModulo spaceNL* operator:( "+" / "-" ) spaceNL* right:aAddSubtract
- / other:aMultDivModulo
+ = head:aMultDivModulo tail:(spaceNL* op:( "+" / "-" ) spaceNL* node:aMultDivModulo { return {op: op, node: node} })*
 
 aMultDivModulo
- = left:aExponent spaceNL* operator:( "*" / "/" ) spaceNL* right:aMultDivModulo
- / other:aExponent
+ = head:aExponent tail:(spaceNL* op:( "*" / "/" ) spaceNL* node:aExponent { return {op: op, node: node} })*
 
 aExponent
- = left:aNegation spaceNL* operator:"**" spaceNL* right:aExponent
- / other:aNegation
+ = head:aNegation tail:(spaceNL* op:"**" spaceNL* node:aNegation { return {op: op, node: node} })*
 
 aNegation
  = operator:( "!" / "~" ) spaceNL* argument:aNegation

@@ -67,6 +67,14 @@ exports.initializer = [
       type: 'concatenation',
       pieces: result
     }
+  },
+  // create a nested tree from a list of same-precedence operators
+  function buildTree(head, tail, createNode) {
+    var result = head;
+    for (var i = 0, l = tail.length; i < l; i++) {
+      result = createNode(result, tail[i]);
+    }
+    return result;
   }
 ].join('\n')
 
@@ -312,10 +320,6 @@ rules.redirectFd = function (fd, op, filename) {
   }
 }
 
-rules.arithmetic = function (expression) {
-  return expression
-}
-
 function aVariable (name) {
   return {type: 'arithmeticVariable', name: name}
 }
@@ -371,27 +375,18 @@ rules.aAssign = [
   }, other
 ]
 
-rules.aLogicalOr = [
-  function (left, right) {
+rules.aLogicalOr =
+rules.aLogicalAnd =
+function (head, tail) {
+  return buildTree(head, tail, function (child, current) {
     return {
       type: 'arithmeticLogical',
-      operator: '||',
-      left: left,
-      right: right
+      operator: current.op,
+      left: child,
+      right: current.node
     }
-  }, other
-]
-
-rules.aLogicalAnd = [
-  function (left, right) {
-    return {
-      type: 'arithmeticLogical',
-      operator: '&&',
-      left: left,
-      right: right
-    }
-  }, other
-]
+  });
+}
 
 rules.aBitwiseOr =
 rules.aBitwiseXor =
@@ -402,15 +397,16 @@ rules.aBitwiseShift =
 rules.aAddSubtract =
 rules.aMultDivModulo =
 rules.aExponent =
-[
-  function arithmeticBinary(left, operator, right) {
-  return {
-    type: 'arithmeticBinary',
-    operator: operator,
-    left: left,
-    right: right
-  }
-}, other]
+function (head, tail) {
+  return buildTree(head, tail, function (child, current) {
+    return {
+      type: 'arithmeticBinary',
+      operator: current.op,
+      left: child,
+      right: current.node
+    }
+  });
+}
 
 rules.aNegation = rules.aUnary =
 [
