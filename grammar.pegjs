@@ -284,7 +284,7 @@ aBarewordChar
   = '\\' chr:aBarewordMeta { return chr }
   / !aBarewordMeta chr:.   { return chr }
 
-aBarewordMeta = [$"';&<>\n()\[*?|`:+ ]
+aBarewordMeta = [$"';&<>\n()\[\]*?|`:+^\- ]
 
 aConcatenation "concatenation of strings and/or variables"
   = pieces:( aBareword
