@@ -8,7 +8,7 @@
         "type": "arithmeticBinary",
         "operator": "*",
         "left": {
-          "type": "arithmeticVariable",
+          "type": "variable",
           "name": "N"
         },
         "right": {

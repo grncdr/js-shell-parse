@@ -277,18 +277,28 @@ aParenExpr
  = '(' spaceNL* value:arithmetic spaceNL* ')' { return value }
  / other:aLiteral { return other }
 
-aVariable
- = name:writableVariableName
- / '$' name:readableVariableName
+aBareword "arithmetic variable"
+  = !'#' name:aBarewordChar+
 
-aConcatenation
- = singleQuote
- / doubleQuote
+aBarewordChar
+  = '\\' chr:aBarewordMeta { return chr }
+  / !aBarewordMeta chr:.   { return chr }
+
+aBarewordMeta = [$"';&<>\n()\[*?|`:+ ]
+
+aConcatenation "concatenation of strings and/or variables"
+  = pieces:( aBareword
+           / environmentVariable
+           / variableSubstitution
+           / arithmeticSubstitution
+           / commandSubstitution
+           / singleQuote
+           / doubleQuote
+           )+
 
 aLiteral
  = val:aNumber   { return val }
  / val:aConcatenation { return val }
- / val:aVariable { return val }
 
 aNumber
  = "0" [xX] digits:[0-9a-fA-Z]+

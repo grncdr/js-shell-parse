@@ -4,15 +4,15 @@
     "expression": {
       "type": "arithmeticConditional",
       "test": {
-        "type": "arithmeticVariable",
+        "type": "variable",
         "name": "a"
       },
       "consequent": {
-        "type": "arithmeticVariable",
+        "type": "variable",
         "name": "b"
       },
       "alternate": {
-        "type": "arithmeticVariable",
+        "type": "variable",
         "name": "c"
       }
     },

@@ -1,0 +1,20 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "concatenation",
+      "pieces": [
+        {
+          "type": "variable",
+          "name": "foo"
+        },
+        {
+          "type": "variable",
+          "name": "bar"
+        }
+      ]
+    },
+    "control": ";",
+    "next": null
+  }
+]

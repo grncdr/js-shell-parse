@@ -1,0 +1,37 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticBinary",
+      "operator": "+",
+      "left": {
+        "type": "number",
+        "value": 1
+      },
+      "right": {
+        "type": "commandSubstitution",
+        "commands": [
+          {
+            "type": "command",
+            "command": {
+              "type": "literal",
+              "value": "echo"
+            },
+            "args": [
+              {
+                "type": "literal",
+                "value": "2"
+              }
+            ],
+            "redirects": [],
+            "env": {},
+            "control": ";",
+            "next": null
+          }
+        ]
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]

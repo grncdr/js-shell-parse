@@ -5,7 +5,7 @@
       "type": "arithmeticBinary",
       "operator": "^",
       "left": {
-        "type": "arithmeticVariable",
+        "type": "variable",
         "name": "a"
       },
       "right": {
@@ -15,7 +15,7 @@
           "type": "arithmeticUnary",
           "operator": "-",
           "argument": {
-            "type": "arithmeticVariable",
+            "type": "variable",
             "name": "b"
           }
         }

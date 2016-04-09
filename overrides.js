@@ -327,11 +327,15 @@ rules.redirectFd = function (fd, op, filename) {
   }
 }
 
-function aVariable (name) {
-  return {type: 'arithmeticVariable', name: name}
+rules.aBareword = function (name) {
+  // TODO: check if array
+  return {type: 'variable', name: name.join('')}
 }
 
-rules.aVariable = [aVariable, aVariable]
+rules.aConcatenation = function (pieces) {
+  // TODO: if it's an array, nest it
+  return flattenConcatenation(pieces)
+}
 
 rules.aNumber = [
   function (digits) {

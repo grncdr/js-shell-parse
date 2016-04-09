@@ -5,7 +5,7 @@
       "type": "arithmeticUnary",
       "operator": "!",
       "argument": {
-        "type": "arithmeticVariable",
+        "type": "variable",
         "name": "?"
       }
     },

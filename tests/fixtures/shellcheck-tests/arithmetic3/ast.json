@@ -4,7 +4,7 @@
     "expression": {
       "type": "arithmeticAssignment",
       "left": {
-        "type": "arithmeticVariable",
+        "type": "variable",
         "name": "n"
       },
       "operator": "|=",
