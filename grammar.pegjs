@@ -89,6 +89,7 @@ concatenation "concatenation of strings and/or variables"
           / bareword
           / environmentVariable
           / variableSubstitution
+          / arithmeticSubstitution
           / commandSubstitution
           / singleQuote
           / doubleQuote
@@ -127,7 +128,8 @@ doubleQuoteMeta
  = '"' / '$' / '`'
 
 expandsInQuotes
- = commandSubstitution
+ = arithmeticSubstitution
+ / commandSubstitution
  / environmentVariable
  / variableSubstitution
 
@@ -212,7 +214,7 @@ arithmetic "an arithmetic expression"
  = expression:aComma { return expression }
 
 aComma "a sequence of arithmetic expressions"
- = head:aAssign tail:( spaceNL* "," spaceNL* aAssign )*
+ = head:aAssign tail:( spaceNL* "," spaceNL* expr:aAssign { return expr } )*
 
 aAssign "an arithmetic assignment"
  = left:aCond spaceNL* operator:( "=" !"=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) spaceNL* right:aAssign
@@ -295,7 +297,7 @@ aNumber
  / digits:[0-9]+
 
 continuationStart
- = &( keyword / '"' / "'" / '`' / "$(" / "${" ) .*
+ = &( keyword / '"' / "'" / '`' / "$(" / "$((" / "${" ) .*
 
 EOF
  = !.

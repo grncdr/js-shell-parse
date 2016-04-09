@@ -5,39 +5,22 @@
       "type": "arithmeticBinary",
       "operator": "+",
       "left": {
-        "type": "commandSubstitution",
-        "commands": [
-          {
-            "type": "subshell",
-            "statements": [
-              {
-                "type": "command",
-                "command": {
-                  "type": "arithmeticBinary",
-                  "operator": "+",
-                  "left": {
-                    "type": "number",
-                    "value": 3
-                  },
-                  "right": {
-                    "type": "number",
-                    "value": 2
-                  }
-                },
-                "args": [],
-                "redirects": [],
-                "env": {},
-                "control": ";",
-                "next": null
-              }
-            ],
-            "control": ";",
-            "next": null
+        "type": "arithmeticSubstitution",
+        "expression": {
+          "type": "arithmeticBinary",
+          "operator": "+",
+          "left": {
+            "type": "number",
+            "value": 3
+          },
+          "right": {
+            "type": "number",
+            "value": 2
           }
-        ]
+        }
       },
       "right": {
-        "type": "number",
+        "type": "literal",
         "value": "37"
       }
     },

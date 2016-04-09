@@ -282,6 +282,13 @@ rules.parenCommandSubstitution = function (commands) {
   }
 }
 
+rules.arithmeticSubstitution = function (expression) {
+  return {
+    type: 'arithmeticSubstitution',
+    expression: expression
+  };
+}
+
 rules.backQuote = function (input) {
   return { type: 'commandSubstitution', commands: parse(input.join('')) }
 }
