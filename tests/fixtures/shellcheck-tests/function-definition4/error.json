@@ -1,0 +1,3 @@
+{
+  "shellcheck": "SC1065: Trying to declare parameters? Don't. Use () and refer to params as $1, $2.."
+}
