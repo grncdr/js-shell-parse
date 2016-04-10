@@ -1,0 +1,19 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticBinary",
+      "operator": "+",
+      "left": {
+        "type": "number",
+        "value": 3
+      },
+      "right": {
+        "type": "number",
+        "value": 2
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]
