@@ -270,8 +270,12 @@ aPreIncDec
  / other:aPostIncDec
 
 aPostIncDec
- = argument:aParenExpr operators:(spaceNL* op:( "++" / "--" ) { return op })+
- / other:aParenExpr
+ = argument:aMemberExpr operators:(spaceNL* op:( "++" / "--" ) { return op })+
+ / other:aMemberExpr
+
+
+aMemberExpr
+  = head:aParenExpr tail:(spaceNL* "[" property:arithmetic "]" { return property })*
 
 aParenExpr
  = '(' spaceNL* value:arithmetic spaceNL* ')' { return value }

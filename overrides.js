@@ -453,3 +453,13 @@ rules.aPostIncDec = [
     });
   }, other
 ]
+
+rules.aMemberExpr = function (head, tail) {
+  return buildTree(head, tail, function (child, current) {
+    return {
+      type: 'arithmeticMemberExpression',
+      array: child,
+      property: current
+    }
+  });
+}
