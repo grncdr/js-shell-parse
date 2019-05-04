@@ -1,0 +1,35 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticAssignment",
+      "left": {
+        "type": "number",
+        "value": 1
+      },
+      "operator": "|=",
+      "right": {
+        "type": "arithmeticAssignment",
+        "left": {
+          "type": "arithmeticLogical",
+          "operator": "&&",
+          "left": {
+            "type": "number",
+            "value": 4
+          },
+          "right": {
+            "type": "variable",
+            "name": "n"
+          }
+        },
+        "operator": ">>=",
+        "right": {
+          "type": "number",
+          "value": 4
+        }
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]

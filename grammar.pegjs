@@ -7,7 +7,8 @@ statementList
    space* last:controlOperator? spaceNL*
 
 statement
- = statement:( subshell
+ = statement:(arithmeticStatement
+             / subshell
              / bashExtensions
              / command
              / variableAssignment
@@ -19,6 +20,9 @@ statement
 
 chainedStatement
  = operator:('&&' / '||') spaceNL* statement:statement
+
+arithmeticStatement "an arithmetic statement"
+ = "((" space* expression:arithmetic space* "))"
 
 subshell "a subshell"
  = "(" space* statements:statementList  space* ")"
@@ -85,6 +89,7 @@ concatenation "concatenation of strings and/or variables"
           / bareword
           / environmentVariable
           / variableSubstitution
+          / arithmeticSubstitution
           / commandSubstitution
           / singleQuote
           / doubleQuote
@@ -123,7 +128,8 @@ doubleQuoteMeta
  = '"' / '$' / '`'
 
 expandsInQuotes
- = commandSubstitution
+ = arithmeticSubstitution
+ / commandSubstitution
  / environmentVariable
  / variableSubstitution
 
@@ -139,6 +145,9 @@ commandSubstitution
 
 parenCommandSubstitution
  = '$(' commands:statementList ')'
+
+arithmeticSubstitution
+ = '$((' expression:arithmetic '))'
 
 backQuote
  = '`' input:backQuoteChar+ '`'
@@ -200,8 +209,109 @@ keyword
    )
    ( spaceNL+ / EOF )
 
+// http://www.gnu.org/software/bash/manual/html_node/Shell-Arithmetic.html
+arithmetic "an arithmetic expression"
+ = expression:aComma { return expression }
+
+aComma "a sequence of arithmetic expressions"
+ = head:aAssign tail:( spaceNL* "," spaceNL* expr:aAssign { return expr } )*
+
+aAssign "an arithmetic assignment"
+ = left:aCond spaceNL* operator:( "=" !"=" / "*=" / "/=" / "%=" / "+=" / "-=" / "<<=" / ">>=" / "&=" / "^=" / "|=" ) spaceNL* right:aAssign
+ / other:aCond
+
+aCond "an arithmetic conditional expression"
+ = test:aLogicalOr spaceNL* "?" spaceNL* consequent:aAssign spaceNL* ":" spaceNL* alternate:aAssign
+ / other:aLogicalOr
+
+aLogicalOr "an arithmetic logical or"
+ = head:aLogicalAnd tail:(spaceNL* op:"||" spaceNL* node:aLogicalAnd { return {op: op, node: node} })*
+
+aLogicalAnd "an arithmetic logical and"
+ = head:aBitwiseOr tail:(spaceNL* op:"&&" spaceNL* node:aBitwiseOr { return {op: op, node: node} })*
+
+aBitwiseOr
+ = head:aBitwiseXor tail:(spaceNL* op:"|" ![|=] spaceNL* node:aBitwiseXor { return {op: op, node: node} })*
+
+aBitwiseXor
+ = head:aBitwiseAnd tail:(spaceNL* op:"^" !"=" spaceNL* node:aBitwiseAnd { return {op: op, node: node} })*
+
+aBitwiseAnd
+ = head:aEquality tail:(spaceNL* op:"&" ![&=] spaceNL* node:aEquality { return {op: op, node: node} })*
+
+aEquality
+ = head:aComparison tail:(spaceNL* op:( "==" / "!=" ) spaceNL* node:aComparison { return {op: op, node: node} })*
+
+aComparison
+ = head:aBitwiseShift tail:(spaceNL* op:( "<=" / ">=" / (v:"<" !"<" { return v }) / (v:">" !">" { return v }) ) spaceNL* node:aBitwiseShift { return {op: op, node: node} })*
+
+aBitwiseShift
+ = head:aAddSubtract tail:(spaceNL* op:( "<<" / ">>" ) !"=" spaceNL* node:aAddSubtract { return {op: op, node: node} })*
+
+aAddSubtract
+ = head:aMultDivModulo tail:(spaceNL* op:( "+" / "-" ) !"=" spaceNL* node:aMultDivModulo { return {op: op, node: node} })*
+
+aMultDivModulo
+ = head:aExponent tail:(spaceNL* op:( (v:"*" !"*" { return v }) / "/" / "%") !"=" spaceNL* node:aExponent { return {op: op, node: node} })*
+
+aExponent
+ = head:aNegation tail:(spaceNL* op:"**" spaceNL* node:aNegation { return {op: op, node: node} })*
+
+aNegation
+ = operator:( "!" / "~" ) spaceNL* argument:aNegation
+ / other:aUnary
+
+aUnary
+ = operator:( (op:"+" ![+=]) { return op } / (op:"-" ![-=]) { return op } ) spaceNL* argument:aUnary
+ / other:aPreIncDec
+
+aPreIncDec
+ = operator:( "++" / "--" ) spaceNL* argument:aPreIncDec
+ / other:aPostIncDec
+
+aPostIncDec
+ = argument:aMemberExpr operators:(spaceNL* op:( "++" / "--" ) { return op })+
+ / other:aMemberExpr
+
+
+aMemberExpr
+  = head:aParenExpr tail:(spaceNL* "[" property:arithmetic "]" { return property })*
+
+aParenExpr
+ = '(' spaceNL* value:arithmetic spaceNL* ')' { return value }
+ / other:aLiteral { return other }
+
+aBareword "arithmetic variable"
+  = !'#' name:aBarewordChar+
+
+aBarewordChar
+  = '\\' chr:aBarewordMeta { return chr }
+  / !aBarewordMeta chr:.   { return chr }
+
+aBarewordMeta = [$"';&<>\n()\[\]*?|`:+^\- ]
+
+aConcatenation "concatenation of strings and/or variables"
+  = pieces:( aBareword
+           / environmentVariable
+           / variableSubstitution
+           / arithmeticSubstitution
+           / commandSubstitution
+           / singleQuote
+           / doubleQuote
+           )+
+
+aLiteral
+ = val:aNumber   { return val }
+ / val:aConcatenation { return val }
+
+aNumber
+ = "0" [xX] digits:[0-9a-fA-Z]+
+ / base:[0-9]+ "#" digits:[0-9a-zA-Z]+
+ / "0" digits:[0-7]+
+ / digits:[0-9]+
+
 continuationStart
- = &( keyword / '"' / "'" / '`' / "$(" / "${" ) .*
+ = &( keyword / '"' / "'" / '`' / "$(" / "$((" / "${" ) .*
 
 EOF
  = !.

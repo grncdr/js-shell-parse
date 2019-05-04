@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var fs = require('fs')
 var pegjs = require('pegjs')
 var overrideAction = require('pegjs-override-action')
@@ -6,10 +8,12 @@ var input     = __dirname + '/grammar.pegjs'
 var output    = __dirname + '/parser.js'
 var overrides = __dirname + '/overrides.js'
 
+var trace = false;
 if (require.main === module) {
   if (process.argv[2] == '-w') {
     watch()
   } else {
+    if (process.argv[2] == '-t') trace = true;
     console.log(getSource())
   }
 }
@@ -19,6 +23,7 @@ function getSource () {
   var grammar = fs.readFileSync(input, 'utf8')
   var parserSource = pegjs.buildParser(grammar, {
     output: "source",
+    trace: trace,
     allowedStartRules: [
       'script',
       'command',

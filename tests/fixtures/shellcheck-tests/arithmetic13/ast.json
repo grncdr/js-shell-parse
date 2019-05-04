@@ -1,0 +1,39 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticUpdate",
+      "operator": "++",
+      "argument": {
+        "type": "arithmeticMemberExpression",
+        "array": {
+          "type": "variable",
+          "name": "foo"
+        },
+        "property": {
+          "type": "arithmeticBinary",
+          "operator": "+",
+          "left": {
+            "type": "arithmeticBinary",
+            "operator": "*",
+            "left": {
+              "type": "number",
+              "value": 9
+            },
+            "right": {
+              "type": "variable",
+              "name": "y"
+            }
+          },
+          "right": {
+            "type": "variable",
+            "name": "x"
+          }
+        }
+      },
+      "prefix": false
+    },
+    "control": ";",
+    "next": null
+  }
+]

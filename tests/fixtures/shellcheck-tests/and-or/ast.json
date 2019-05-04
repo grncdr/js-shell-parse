@@ -1,0 +1,43 @@
+[
+  {
+    "type": "command",
+    "command": {
+      "type": "literal",
+      "value": "grep"
+    },
+    "args": [
+      {
+        "type": "literal",
+        "value": "-i"
+      },
+      {
+        "type": "literal",
+        "value": "lol"
+      },
+      {
+        "type": "literal",
+        "value": "foo"
+      }
+    ],
+    "redirects": [],
+    "env": {},
+    "control": "||",
+    "next": {
+      "type": "command",
+      "command": {
+        "type": "literal",
+        "value": "exit"
+      },
+      "args": [
+        {
+          "type": "literal",
+          "value": "1"
+        }
+      ],
+      "redirects": [],
+      "env": {},
+      "control": ";",
+      "next": null
+    }
+  }
+]

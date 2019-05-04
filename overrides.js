@@ -67,6 +67,14 @@ exports.initializer = [
       type: 'concatenation',
       pieces: result
     }
+  },
+  // create a nested tree from a list of same-precedence operators
+  function buildTree(head, tail, createNode) {
+    var result = head;
+    for (var i = 0, l = tail.length; i < l; i++) {
+      result = createNode(result, tail[i]);
+    }
+    return result;
   }
 ].join('\n')
 
@@ -94,6 +102,13 @@ rules.statementList = function (first, tail, last) {
       command = command.next
     }
     command.control = operator
+  }
+}
+
+rules.arithmeticStatement = function (expression) {
+  return {
+    type: 'arithmeticStatement',
+    expression: expression,
   }
 }
 
@@ -267,6 +282,13 @@ rules.parenCommandSubstitution = function (commands) {
   }
 }
 
+rules.arithmeticSubstitution = function (expression) {
+  return {
+    type: 'arithmeticSubstitution',
+    expression: expression
+  };
+}
+
 rules.backQuote = function (input) {
   return { type: 'commandSubstitution', commands: parse(input.join('')) }
 }
@@ -303,4 +325,141 @@ rules.redirectFd = function (fd, op, filename) {
     op: op,
     filename: filename
   }
+}
+
+rules.aBareword = function (name) {
+  // TODO: check if array
+  return {type: 'variable', name: name.join('')}
+}
+
+rules.aConcatenation = function (pieces) {
+  // TODO: if it's an array, nest it
+  return flattenConcatenation(pieces)
+}
+
+rules.aNumber = [
+  function (digits) {
+    return {type: 'number', value: parseInt(digits.join(''), 16)}
+  },
+  function (base, digits) {
+    return {type: 'number', value: parseInt(digits.join(''), parseInt(base.join(''), 10))}
+  },
+  function (digits) {
+    return {type: 'number', value: parseInt(digits.join(''), 8)}
+  },
+  function (digits) {
+    return {type: 'number', value: parseInt(digits.join(''), 10)}
+  }
+]
+
+rules.aComma = function (head, tail) {
+  if (tail.length) {
+    return {
+      type: 'arithmeticSequence',
+      expressions: [head].concat(tail)
+    }
+  }
+  return head
+}
+
+function other(other) { return other }
+
+rules.aCond = [
+  function (test, consequent, alternate) {
+    return {
+      type: 'arithmeticConditional',
+      test: test,
+      consequent: consequent,
+      alternate: alternate
+    }
+  }, other
+]
+
+rules.aAssign = [
+  function (left, operator, right) {
+    return {
+      type: 'arithmeticAssignment',
+      left: left,
+      operator: operator,
+      right: right
+    }
+  }, other
+]
+
+rules.aLogicalOr =
+rules.aLogicalAnd =
+function (head, tail) {
+  return buildTree(head, tail, function (child, current) {
+    return {
+      type: 'arithmeticLogical',
+      operator: current.op,
+      left: child,
+      right: current.node
+    }
+  });
+}
+
+rules.aBitwiseOr =
+rules.aBitwiseXor =
+rules.aBitwiseAnd =
+rules.aEquality =
+rules.aComparison =
+rules.aBitwiseShift =
+rules.aAddSubtract =
+rules.aMultDivModulo =
+rules.aExponent =
+function (head, tail) {
+  return buildTree(head, tail, function (child, current) {
+    return {
+      type: 'arithmeticBinary',
+      operator: current.op,
+      left: child,
+      right: current.node
+    }
+  });
+}
+
+rules.aNegation = rules.aUnary =
+[
+  function (operator, argument) {
+    return {
+      type: 'arithmeticUnary',
+      operator: operator,
+      argument: argument
+    }
+  }, other
+]
+
+rules.aPreIncDec = [
+  function (operator, argument) {
+    return {
+      type: 'arithmeticUpdate',
+      operator: operator,
+      argument: argument,
+      prefix: true
+    }
+  }, other
+]
+
+rules.aPostIncDec = [
+  function (argument, operators) {
+    return buildTree(argument, operators, function (node, operator) {
+      return {
+        type: 'arithmeticUpdate',
+        operator: operator,
+        argument: node,
+        prefix: false
+      }
+    });
+  }, other
+]
+
+rules.aMemberExpr = function (head, tail) {
+  return buildTree(head, tail, function (child, current) {
+    return {
+      type: 'arithmeticMemberExpression',
+      array: child,
+      property: current
+    }
+  });
 }

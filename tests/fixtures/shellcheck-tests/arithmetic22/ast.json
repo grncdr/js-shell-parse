@@ -1,0 +1,19 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticUnary",
+      "operator": "!",
+      "argument": {
+        "type": "arithmeticUnary",
+        "operator": "!",
+        "argument": {
+          "type": "variable",
+          "name": "a"
+        }
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]

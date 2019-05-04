@@ -1,0 +1,27 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticAssignment",
+      "left": {
+        "type": "variable",
+        "name": "n"
+      },
+      "operator": "&=",
+      "right": {
+        "type": "arithmeticBinary",
+        "operator": "**",
+        "left": {
+          "type": "number",
+          "value": 2
+        },
+        "right": {
+          "type": "number",
+          "value": 3
+        }
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]

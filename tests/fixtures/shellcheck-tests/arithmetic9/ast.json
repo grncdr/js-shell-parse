@@ -1,0 +1,27 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticBinary",
+      "operator": "^",
+      "left": {
+        "type": "variable",
+        "name": "a"
+      },
+      "right": {
+        "type": "arithmeticUnary",
+        "operator": "!",
+        "argument": {
+          "type": "arithmeticUnary",
+          "operator": "-",
+          "argument": {
+            "type": "variable",
+            "name": "b"
+          }
+        }
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]

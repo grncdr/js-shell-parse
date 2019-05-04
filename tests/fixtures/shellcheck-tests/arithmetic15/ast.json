@@ -1,0 +1,73 @@
+[
+  {
+    "type": "arithmeticStatement",
+    "expression": {
+      "type": "arithmeticBinary",
+      "operator": "+",
+      "left": {
+        "type": "arithmeticMemberExpression",
+        "array": {
+          "type": "variable",
+          "name": "foo"
+        },
+        "property": {
+          "type": "arithmeticBinary",
+          "operator": "*",
+          "left": {
+            "type": "commandSubstitution",
+            "commands": [
+              {
+                "type": "command",
+                "command": {
+                  "type": "literal",
+                  "value": "echo"
+                },
+                "args": [
+                  {
+                    "type": "literal",
+                    "value": "foo"
+                  }
+                ],
+                "redirects": [
+                  {
+                    "type": "pipe",
+                    "command": {
+                      "type": "command",
+                      "command": {
+                        "type": "literal",
+                        "value": "sed"
+                      },
+                      "args": [
+                        {
+                          "type": "literal",
+                          "value": "s/foo/4/g"
+                        }
+                      ],
+                      "redirects": [],
+                      "env": {},
+                      "control": ";",
+                      "next": null
+                    }
+                  }
+                ],
+                "env": {},
+                "control": ";",
+                "next": null
+              }
+            ]
+          },
+          "right": {
+            "type": "number",
+            "value": 3
+          }
+        }
+      },
+      "right": {
+        "type": "number",
+        "value": 4
+      }
+    },
+    "control": ";",
+    "next": null
+  }
+]
