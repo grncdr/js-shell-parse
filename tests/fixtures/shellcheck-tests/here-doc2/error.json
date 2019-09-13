@@ -1,0 +1,3 @@
+{
+  "shellcheck": "SC1040: When using <<-, you can only indent with tabs."
+}

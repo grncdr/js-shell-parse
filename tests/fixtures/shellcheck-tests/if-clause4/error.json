@@ -1,0 +1,3 @@
+{
+  "shellcheck": "SC1075: Use 'elif' instead of 'else if'"
+}

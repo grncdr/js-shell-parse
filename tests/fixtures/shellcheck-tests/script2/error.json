@@ -1,0 +1,3 @@
+{
+  "shellcheck": "SC1017: Literal carriage return. Run script through tr -d '\r'"
+}
